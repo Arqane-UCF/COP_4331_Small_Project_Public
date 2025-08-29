@@ -13,6 +13,7 @@ $S_DSN = getenv('SENTRY_DSN');
 if($S_DSN !== false)
     \Sentry\init([
         'dsn' => $S_DSN,
+        'send_default_pii' => true,
         'traces_sample_rate' => 1.0,
         'profiles_sample_rate' => 1.0,
         'enable_logs' => true,
