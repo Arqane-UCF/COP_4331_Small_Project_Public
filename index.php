@@ -1,3 +1,4 @@
+<?php require_once "/var/www/html/sentry.php"; ?>
 <html>
     <head>
         <title>Hello World!</title>
