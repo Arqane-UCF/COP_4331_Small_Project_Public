@@ -1,5 +1,5 @@
-<?php require_once "/var/www/html/sentry.php"; ?>
-<html>
+<?php require_once "loader.php"; ?>
+<html lang="en">
     <head>
         <title>Hello World!</title>
     </head>
