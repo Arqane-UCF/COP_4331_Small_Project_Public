@@ -5,24 +5,49 @@ require_once "./loader.php";
 //password_hash();
 //password_verify()
 
-
-class DBMGR {
-    private static $mysql = mysqli_connect("localhost", getenv("DB_USERNAME"), getenv("DB_PASSWORD"), getenv("DB_USERNAME"));;
-    private $username;
-    public function __construct($username) {
-        $this->username = $username;
-    }
-    public function login(, $password) {
-
-    }
-    public function register(, $password) {
-
-    }
-    public function getUserPosts() {
-
-    }
+class DBGlobal {
+    private static $mysql = mysqli_connect("localhost", getenv("DB_USERNAME"), getenv("DB_PASSWORD"), getenv("DB_USERNAME"));
     /** Return array of tags uniquely from the DB */
+
+    public static function getRawDB() {
+        return DBGlobal::$mysql;
+    }
     public static function getAllTags() {
 
+    }
+}
+
+class User {
+    private _id;
+    private _username;
+
+    private function __construct($id, $username) {
+        $this->id = $id;
+        $this->username = $username;
+    }
+    /** !!!ONLY USE THIS TO PULL USER DATA FROM SESSION!!! */
+    public static function getByID($id) {
+        $statement = sprintf("SELECT * FROM users WHERE id = '%s'", DBGlobal::getRawDB()->escape_string($id));
+        $result = DBGlobal::getRawDB()->query($statement)->fetch_assoc();
+        if(!$result)
+            return null;
+        return new User($result["id"], $result["username"]);
+    }
+    public static function login($username, $password) {
+        $statement = sprintf("SELECT * FROM users WHERE username = '%s'", DBGlobal::getRawDB()->escape_string($username));
+        $result = DBGlobal::getRawDB()->query($statement)->fetch_assoc();
+        if(!$result)
+            return null;
+        if(!password_verify($password, $result["password"]))
+            return null;
+        return new User($result["id"], $result["username"]);
+    }
+
+    public static function register($username, $password) {
+        $statement = DBGlobal::getRawDB()->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
+        $statement->bind_param("ss", $username, $password);
+        if($statement->execute())
+            return new User($statement->insert_id, $username);
+        return null;
     }
 }
