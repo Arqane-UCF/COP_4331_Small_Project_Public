@@ -6,10 +6,12 @@ require_once "./loader.php";
 //password_verify()
 
 class DBGlobal {
-    private static $mysql = mysqli_connect("localhost", getenv("DB_USERNAME"), getenv("DB_PASSWORD"), getenv("DB_USERNAME"));
+    private static $mysql;
     /** Return array of tags uniquely from the DB */
 
     public static function getRawDB() {
+        if(!DBGlobal::$mysql)
+            return DBGlobal::$mysql = mysqli_connect("localhost", getenv("DB_USERNAME"), getenv("DB_PASSWORD"), getenv("DB_USERNAME"));;
         return DBGlobal::$mysql;
     }
     public static function getAllTags() {
@@ -18,8 +20,8 @@ class DBGlobal {
 }
 
 class User {
-    private _id;
-    private _username;
+    private $id;
+    private $username;
 
     private function __construct($id, $username) {
         $this->id = $id;
