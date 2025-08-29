@@ -5,7 +5,7 @@
 require_once "vendor/autoload.php";
 
 // Load .env
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__);
 $dotenv->load();
 
 // Configure Sentry
@@ -22,3 +22,7 @@ if($S_DSN !== false)
 $mysql = mysqli_connect("localhost", getenv("DB_USERNAME"), getenv("DB_PASSWORD"), getenv("DB_USERNAME"));
 if(!$mysql)
     exit("Database cannot be reached");
+
+// Internal Note: Function for password hashing
+//password_hash();
+//password_verify()
