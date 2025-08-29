@@ -18,12 +18,3 @@ if($S_DSN !== false)
         'profiles_sample_rate' => 1.0,
         'enable_logs' => true,
     ]);
-
-// Database conn
-$mysql = mysqli_connect("localhost", getenv("DB_USERNAME"), getenv("DB_PASSWORD"), getenv("DB_USERNAME"));
-if(!$mysql)
-    exit("Database cannot be reached");
-
-// Internal Note: Function for password hashing
-//password_hash();
-//password_verify()
