@@ -1,5 +1,8 @@
 <?php
-// Add require_once "/var/www/html/loader.php";
+// Add require_once "/var/www/html/loader.php"; to the top of the php code
+// Add \Sentry\logger()->flush(); to the bottom of the php code (except for library/component php codes)
+
+
 // Main header File for all PHP endpoint
 
 require_once "vendor/autoload.php";
@@ -33,7 +36,7 @@ if($S_DSN !== false) {
                 replaysSessionSampleRate: 0.0, // Useless
                 replaysOnErrorSampleRate: 1.0, // Might have enough budget
                 sendDefaultPii: true,
-                enableLogs: true,
+                enableLogs: false, // I'll flip this on when frontend started working
                 tunnel: "/tunnel.php"
                 ignoreErrors: [
                     "jQuery",
@@ -43,7 +46,6 @@ if($S_DSN !== false) {
             });
             console.log("Sentry Loaded Done ^w^");
         }
-
     </script>
 <?php
 }
