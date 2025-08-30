@@ -15,7 +15,20 @@ class DBGlobal {
 
     /** Return array of tags uniquely from the DB */
     public static function getAllTags() {
-        //@TODO: Yes
+        \Sentry\logger()->debug("DBGlobal.getAllTags: Query tag table");
+        $statement = DBGlobal::getRawDB()->prepare("SELECT DISTINCT value FROM tags");
+
+        if($statement->execute()) {
+            $res = $statement->get_result();
+            $data = array();
+            while($tag = $res->fetch_assoc())
+                $data[] = $tag['value'];
+            \Sentry\logger()->info("DBGlobal.getAllTags: Operation Success!");
+            return $data;
+        }
+
+        \Sentry\logger()->error(sprintf("DBGlobal.getAllTags: Query Failed, SQL Err: %d", $statement->errno));
+        return null;
     }
 }
 
