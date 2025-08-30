@@ -14,7 +14,7 @@ class DBGlobal {
     public static function getAllTags(): ?array
     {
         \Sentry\logger()->debug("DBGlobal.getAllTags: Query tag table");
-        $statement = DBGlobal::getRawDB()->prepare("SELECT DISTINCT value FROM tags");
+        $statement = DBGlobal::getRawDB()->prepare("SELECT DISTINCT `value` FROM tags");
 
         if($statement->execute()) {
             $res = $statement->get_result();
@@ -96,11 +96,7 @@ class User {
             default: throw new Exception("User Class: Uhhh, unavailable..");
         }
     }
-
-    public function searchContact(?string $firstName = null, ?string $lastName = null): ?Array {
-        // Left as an exercise for reader
-        return array(); // Placeholder, replace it with Array, containing constructed Contacts class.
-    }
+    // API/BACKEND DEV NOTICE: Add your own search functionality and construct/return Contact class as a way to store the info.
 }
 
 class Contact {
@@ -152,7 +148,8 @@ class Contact {
             \Sentry\logger()->error(sprintf("Contact.addTag: Tag %s caused unhandled sql error (for contactID %d): %d", $tag, $this->id, $statement->errno));
         return false;
     }
-    public function removeTag(string $tag) {
+    public function removeTag(string $tag): bool
+    {
         \Sentry\logger()->debug(sprintf("Contact.removeTag: Query for contactID %d", $this->id));
         $statement = DBGlobal::getRawDB()->prepare("DELETE FROM tags WHERE contactid = '?' AND value = '?'");
         $statement->bind_param("is", $this->id, $tag);
@@ -160,7 +157,7 @@ class Contact {
         if($statement->execute()) {
             // No need to check if the number is greater than 1 because of configured database constraint
             if($statement->affected_rows === 0) {
-                \Sentry\logger()->info(sprintf("Contact.removeTag: tag %s doesn't exist for contactID %d", $tag, $this->id));
+                \Sentry\logger()->warn(sprintf("Contact.removeTag: tag %s doesn't exist for contactID %d", $tag, $this->id));
                 return false;
             }
 
@@ -177,8 +174,27 @@ class Contact {
         \Sentry\logger()->error(sprintf("Contact.removeTag: Tag %s caused unhandled sql error (for contactID %d): %d", $tag, $this->id, $statement->errno));
         return false;
     }
-    public function setFavorite(bool $isFavorite) {
-        //@TODO: Yes
+
+    /** Reverse the current favorite status */
+    public function setFavorite(): bool {
+        \Sentry\logger()->debug(sprintf("Contact.setFavorite: Query for contactID %d", $this->id));
+        $revFavState = $this->isFavorite ? 0 : 1;
+        $statement = DBGlobal::getRawDB()->prepare("UPDATE contacts SET favorite = ? WHERE id = ?");
+        $statement->bind_param("ii", $revFavState, $this->id);
+
+        if($statement->execute()) {
+            if($statement->affected_rows === 0) {
+                \Sentry\logger()->warn(sprintf("Contact.setFavorite: contactID (%d) not found", $this->id));
+                return false;
+            }
+
+            $this->isFavorite = $revFavState;
+            \Sentry\logger()->info(sprintf("Contact.setFavorite: contactID (%d) favorite status changed to %d", $this->id, $revFavState));
+            return true;
+        }
+
+        \Sentry\logger()->error(sprintf("Contact.setFavorite: Changing favorite status for contactID (%d) cause SQL Error: %d", $this->id, $statement->errno));
+        return false;
     }
     public function destroy() {
         //@TODO: Yes
