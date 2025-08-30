@@ -52,4 +52,20 @@ class User {
             return new User($statement->insert_id, $username);
         return null;
     }
+
+    public function __get($name) {
+        if($name === "id")
+            return $this->id;
+        if($name === "username")
+            return $this->username;
+        if($name === "password")
+            throw new Exception("Why would you do this LMAO!! You cant try and get user's password.");
+        throw new Exception("User Class: Uhhh, unavailable..");
+    }
+
+    /** BACKEND DEVS, ADD ANY USER ENDPOINT YOU NEED HERE */
+}
+
+class Post {
+
 }
