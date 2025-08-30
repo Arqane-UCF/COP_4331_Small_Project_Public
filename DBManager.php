@@ -84,7 +84,7 @@ class User {
     }
 
     public function searchContact(?string $firstName = null, ?string $lastName = null) {
-        // Left as an exercise to reader
+        // Left as an exercise for reader
         // hint: It should construct a Contact class and use that to handle Contact information
     }
 }
@@ -117,16 +117,16 @@ class Contact {
     }
 
     public function addTag(string $tag) {
-
+        //@TODO: Yes
     }
     public function removeTag(string $tag) {
-
+        //@TODO: Yes
     }
     public function setFavorite(bool $isFavorite) {
-
+        //@TODO: Yes
     }
     public function destroyContact() {
-
+        //@TODO: Yes
     }
 
     // I'm assuming contact information isn't designed to be changed afterward?
