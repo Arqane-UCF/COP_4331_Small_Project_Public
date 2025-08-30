@@ -1,9 +1,6 @@
 <?php
 
 require_once "./loader.php";
-// Internal Note: Function for password hashing
-//password_hash();
-//password_verify()
 
 class DBGlobal {
     private static $mysql;
@@ -14,7 +11,8 @@ class DBGlobal {
     }
 
     /** Return array of tags uniquely from the DB */
-    public static function getAllTags() {
+    public static function getAllTags(): ?array
+    {
         \Sentry\logger()->debug("DBGlobal.getAllTags: Query tag table");
         $statement = DBGlobal::getRawDB()->prepare("SELECT DISTINCT value FROM tags");
 
@@ -33,7 +31,7 @@ class DBGlobal {
 }
 
 class User {
-    private integer $id;
+    private int $id;
     private string $username;
 
     private function __construct($id, $username) {
@@ -41,7 +39,8 @@ class User {
         $this->username = $username;
     }
     /** !!!ONLY USE THIS TO PULL USER DATA FROM SESSION!!! */
-    public static function getByID(integer $id) {
+    public static function getByID(int $id): ?User
+    {
         \Sentry\logger()->debug(sprintf("User.getByID: Query for userid %d", $id));
         $statement = sprintf("SELECT * FROM users WHERE id = '%d'", DBGlobal::getRawDB()->escape_string($id));
         $result = DBGlobal::getRawDB()->query($statement)->fetch_assoc();
@@ -54,7 +53,8 @@ class User {
         \Sentry\logger()->debug(sprintf("User.getByID: Found Userid %d", $id));
         return new User($result["id"], $result["username"]);
     }
-    public static function login(string $username, string $password) {
+    public static function login(string $username, string $password): ?User
+    {
         \Sentry\logger()->debug(sprintf("User.login: Query for user %s", $username));
         $statement = sprintf("SELECT * FROM users WHERE username = '%s'", DBGlobal::getRawDB()->escape_string($username));
         $result = DBGlobal::getRawDB()->query($statement)->fetch_assoc();
@@ -70,7 +70,8 @@ class User {
         return new User($result["id"], $result["username"]);
     }
 
-    public static function register(string $username, string $password) {
+    public static function register(string $username, string $password): ?User
+    {
         \Sentry\logger()->debug(sprintf("User.register: Query for user %s", $username));
         $statement = DBGlobal::getRawDB()->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
         $statement->bind_param("ss", $username, $password);
@@ -96,9 +97,9 @@ class User {
         }
     }
 
-    public function searchContact(?string $firstName = null, ?string $lastName = null) {
+    public function searchContact(?string $firstName = null, ?string $lastName = null): ?Array {
         // Left as an exercise for reader
-        // hint: It should construct a Contact class and use that to handle Contact information
+        return array(); // Placeholder, replace it with Array, containing constructed Contacts class.
     }
 }
 
@@ -132,7 +133,8 @@ class Contact {
         }
     }
 
-    public function addTag(string $tag) {
+    public function addTag(string $tag): bool
+    {
         // For real-world project, use multi-insertion technique instead
         \Sentry\logger()->debug(sprintf("Contact.addTag: Query for contactID %d", $this->id));
         $statement = DBGlobal::getRawDB()->prepare("INSERT INTO tags (contactid, value) VALUES (?, ?)");
@@ -156,7 +158,7 @@ class Contact {
     public function setFavorite(bool $isFavorite) {
         //@TODO: Yes
     }
-    public function destroyContact() {
+    public function destroy() {
         //@TODO: Yes
     }
 
