@@ -42,26 +42,38 @@ class User {
     public static function getByID(int $id): ?User
     {
         logger()->debug(sprintf("User.getByID: Query for userid %d", $id));
-        $statement = sprintf("SELECT * FROM users WHERE id = '%d'", DBGlobal::getRawDB()->escape_string($id));
-        $result = DBGlobal::getRawDB()->query($statement)->fetch_assoc();
+        $statement = DBGlobal::getRawDB()->prepare("SELECT * FROM users WHERE id = ?");
+        $statement->bind_param("i", $id);
 
-        if(!$result) {
-            logger()->error(sprintf("User.getByID: Userid %d not found", $id));
+        if(!$statement->execute()) {
+            logger()->error(sprintf("User.getByID: Query for userid %d failed with status: %d", $id, $statement->errno));
+            return null;
+        }
+        if($statement->num_rows === 0) {
+            logger()->warn(sprintf("User.getByID: Userid %d not found", $id));
             return null;
         }
 
+        $result = $statement->get_result()->fetch_assoc();
         logger()->debug(sprintf("User.getByID: Found Userid %d", $id));
         return new User($result["id"], $result["username"]);
     }
     public static function login(string $username, string $password): ?User
     {
         logger()->debug(sprintf("User.login: Query for user %s", $username));
-        $statement = sprintf("SELECT * FROM users WHERE username = '%s'", DBGlobal::getRawDB()->escape_string($username));
-        $result = DBGlobal::getRawDB()->query($statement)->fetch_assoc();
-        if(!$result) {
+        $statement = DBGlobal::getRawDB()->prepare("SELECT * FROM users WHERE username = '?'");
+        $statement->bind_param("s", $username);
+
+        if(!$statement->execute()) {
+            logger()->error(sprintf("User.login: Query for user %s failed with status: %d", $username, $statement->errno));
+            return null;
+        }
+        if($statement->num_rows === 0) {
             logger()->info(sprintf("User.login: User %s not found", $username));
             return null;
         }
+
+        $result = $statement->get_result()->fetch_assoc();
         if(!password_verify($password, $result["password"])) {
             logger()->info(sprintf("User.login: User %s input incorrect password", $username));
             return null;
@@ -102,7 +114,7 @@ class User {
     public function searchContactByName(?string $firstName = null, ?string $lastName = null): ?array {
         $statement = null;
         $fixedQuery = "SELECT c.id, c.firstName, c.lastName, c.email, c.phoneNum, GROUP_CONCAT(t.value) AS tags
-FROM contacts c LEFT JOIN tags t ON c.id = t.contactid WHERE ownerid='?' %s GROUP BY c.id";
+FROM contacts c LEFT JOIN tags t ON c.id = t.contactid WHERE ownerid=? %s GROUP BY c.id";
         if($firstName === null && $lastName === null) {
             logger()->debug(sprintf("User.searchContactByName: Query without name for userid %s", $this->id));
             $statement = DBGlobal::getRawDB()->prepare($fixedQuery);
