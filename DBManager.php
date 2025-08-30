@@ -153,7 +153,29 @@ class Contact {
         return false;
     }
     public function removeTag(string $tag) {
-        //@TODO: Yes
+        \Sentry\logger()->debug(sprintf("Contact.removeTag: Query for contactID %d", $this->id));
+        $statement = DBGlobal::getRawDB()->prepare("DELETE FROM tags WHERE contactid = '?' AND value = '?'");
+        $statement->bind_param("is", $this->id, $tag);
+
+        if($statement->execute()) {
+            // No need to check if the number is greater than 1 because of configured database constraint
+            if($statement->affected_rows === 0) {
+                \Sentry\logger()->info(sprintf("Contact.removeTag: tag %s doesn't exist for contactID %d", $tag, $this->id));
+                return false;
+            }
+
+            $arrKey = array_search($tag, $this->tags);
+            if($arrKey)
+                unset($this->tags[$arrKey]);
+            if(!$arrKey)
+                \Sentry\logger()->warn(sprintf("Contact.removeTag: tag %s failed to remove from contactID's (%d) current class field", $tag, $this->id));
+
+            \Sentry\logger()->info(sprintf("Contact.removeTag: tag %s successfully deleted from contactID %d", $tag, $this->id));
+            return true;
+        }
+
+        \Sentry\logger()->error(sprintf("Contact.removeTag: Tag %s caused unhandled sql error (for contactID %d): %d", $tag, $this->id, $statement->errno));
+        return false;
     }
     public function setFavorite(bool $isFavorite) {
         //@TODO: Yes
