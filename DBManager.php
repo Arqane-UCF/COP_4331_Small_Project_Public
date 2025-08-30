@@ -90,6 +90,7 @@ class User {
 }
 
 class Contact {
+    private int $id;
     private string $firstName;
     private string $lastName;
     private string $email;
@@ -97,8 +98,9 @@ class Contact {
     private bool $isFavorite;
 
     /** !! Do not call it outside of User.searchContact !! */
-    public function __construct($firstName, $lastName, $email, $tags, $isFavorite)
+    public function __construct($id, $firstName, $lastName, $email, $tags, $isFavorite)
     {
+        $this->id = $id;
         $this->firstName = $firstName;
         $this->lastName = $lastName;
         $this->email = $email;
@@ -107,6 +109,7 @@ class Contact {
     }
     public function __get($name) {
         switch($name) {
+            case "id": return $this->id;
             case "firstName": return $this->firstName;
             case "lastName": return $this->lastName;
             case "email": return $this->email;
@@ -117,7 +120,22 @@ class Contact {
     }
 
     public function addTag(string $tag) {
-        //@TODO: Yes
+        // For real-world project, use multi-insertion technique instead
+        \Sentry\logger()->debug(sprintf("Contact.addTag: Query for contactID %d", $this->id));
+        $statement = DBGlobal::getRawDB()->prepare("INSERT INTO tags (contactid, value) VALUES (?, ?)");
+        $statement->bind_param("is", $this->id, $tag);
+
+        if($statement->execute()) {
+            \Sentry\logger()->info(sprintf("Contact.addTag: tag %s successfully added to contactID %d", $tag, $this->id));
+            $this->tags[] = $tag;
+            return true;
+        }
+
+        if($statement->errno === 1062)
+            \Sentry\logger()->info(sprintf("Contact.addTag: Duplicate tag (%s) for contactID %d", $tag, $this->id));
+        else
+            \Sentry\logger()->error(sprintf("Contact.addTag: Tag %s caused unhandled sql error (for contactID %d): %d", $tag, $this->id, $statement->errno));
+        return false;
     }
     public function removeTag(string $tag) {
         //@TODO: Yes
