@@ -4,7 +4,6 @@
 
 
 // Main header File for all PHP endpoint
-
 require_once "vendor/autoload.php";
 
 // Load .env
@@ -15,38 +14,15 @@ $dotenv->load();
 $S_DSN = getenv('SENTRY_DSN');
 if($S_DSN !== false) {
     \Sentry\init([
-        'dsn' => $S_DSN,
-        'send_default_pii' => true,
-        'traces_sample_rate' => 1.0,
-        'profiles_sample_rate' => 1.0,
-        'enable_logs' => true,
+            'dsn' => $S_DSN,
+            'send_default_pii' => true,
+            'traces_sample_rate' => 1.0,
+            'profiles_sample_rate' => 1.0,
+            'enable_logs' => true,
     ]);
-?>
-    <!-- Frontend Sentry loader stuff -->
-    <script src="/scripts/sentry.js" data-lazy="no"></script>
-    <script>
-        if(window.Sentry) {
-            Sentry.init({
-                dsn: "<?php echo $S_DSN; ?>",
-                integrations: [
-                    Sentry.browserTracingIntegration(),
-                    Sentry.replayIntegration()
-                ],
-                tracesSampleRate: 1.0, // My account has the budget LOL
-                replaysSessionSampleRate: 0.0, // Useless
-                replaysOnErrorSampleRate: 1.0, // Might have enough budget
-                sendDefaultPii: true,
-                enableLogs: false, // I'll flip this on when frontend started working
-                tunnel: "/tunnel.php"
-                ignoreErrors: [
-                    "jQuery",
-                    "Failed to fetch",
-                    "EADDRINUSE"
-                ]
-            });
-            console.log("Sentry Loaded Done ^w^");
-        }
-    </script>
-<?php
 }
 ?>
+
+<!-- Frontend Sentry loader stuff -->
+<script src="https://browser.sentry-cdn.com/10.8.0/bundle.tracing.replay.min.js" crossorigin="anonymous" on-lazy="no"></script>
+<script src="/scripts/loader.js"></script>
