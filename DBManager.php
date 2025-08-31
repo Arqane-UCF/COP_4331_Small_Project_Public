@@ -117,7 +117,7 @@ class User {
 FROM contacts c LEFT JOIN tags t ON c.id = t.contactid WHERE ownerid=? %s GROUP BY c.id";
         if($firstName === null && $lastName === null) {
             logger()->debug(sprintf("User.searchContactByName: Query without name for userid %s", $this->id));
-            $statement = DBGlobal::getRawDB()->prepare($fixedQuery);
+            $statement = DBGlobal::getRawDB()->prepare(sprintf($fixedQuery, ""));
             $statement->bind_param("i", $this->id);
         }
         if($firstName !== null && $lastName === null) {
