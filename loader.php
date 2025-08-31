@@ -1,6 +1,7 @@
 <?php
-// Add require_once "/var/www/html/loader.php"; to the top of the php code
-// Add \Sentry\logger()->flush(); to the bottom of the php code (except for library/component php codes)
+// Add 《require_once "/var/www/html/loader.php";》 to the top of the php code
+// Or you can only just add 《require_once "/var/www/html/DBManager.php";》 if database interaction is needed
+// Add 《\Sentry\logger()->flush();》 to the bottom of the php code (except for library/component php codes)
 
 
 // Main header File for all PHP endpoint

@@ -274,8 +274,6 @@ class Contact {
         $this->id = 0;
         logger()->info(sprintf("Contact.destroy: contactID (%d) successfully deleted", $this->id));
         return true;
-
-
     }
 
     // I'm assuming contact information isn't designed to be changed afterward?
