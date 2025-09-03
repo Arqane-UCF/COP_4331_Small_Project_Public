@@ -1,7 +1,10 @@
 <?php
-// Add require_once "/var/www/html/loader.php";
-// Main header File for all PHP endpoint
+// Add 《require_once "/var/www/html/loader.php";》 to the top of the php code
+// Or you can only just add 《require_once "/var/www/html/DBManager.php";》 if database interaction is needed
+// Add 《\Sentry\logger()->flush();》 to the bottom of the php code (except for library/component php codes)
 
+
+// Main header File for all PHP endpoint
 require_once "vendor/autoload.php";
 
 // Load .env
@@ -10,20 +13,17 @@ $dotenv->load();
 
 // Configure Sentry
 $S_DSN = getenv('SENTRY_DSN');
-if($S_DSN !== false)
+if($S_DSN !== false) {
     \Sentry\init([
-        'dsn' => $S_DSN,
-        'send_default_pii' => true,
-        'traces_sample_rate' => 1.0,
-        'profiles_sample_rate' => 1.0,
-        'enable_logs' => true,
+            'dsn' => $S_DSN,
+            'send_default_pii' => true,
+            'traces_sample_rate' => 1.0,
+            'profiles_sample_rate' => 1.0,
+            'enable_logs' => true,
     ]);
+}
+?>
 
-// Database conn
-$mysql = mysqli_connect("localhost", getenv("DB_USERNAME"), getenv("DB_PASSWORD"), getenv("DB_USERNAME"));
-if(!$mysql)
-    exit("Database cannot be reached");
-
-// Internal Note: Function for password hashing
-//password_hash();
-//password_verify()
+<!-- Frontend Sentry loader stuff -->
+<script src="https://browser.sentry-cdn.com/10.8.0/bundle.tracing.replay.min.js" crossorigin="anonymous" on-lazy="no"></script>
+<script src="/scripts/loader.js"></script>
