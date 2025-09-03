@@ -7,7 +7,6 @@
   --ring: rgba(24,58,51,.18);
 }
 
-/* reset-ish */
 * { box-sizing: border-box; }
 html, body { height: 100%; }
 body {
@@ -16,24 +15,18 @@ body {
   color: var(--primary);
 }
 
-/* background */
 .auth-bg {
   min-height: 100%;
   display: grid;
   place-items: center;
   position: relative;
   padding: 96px 24px;
-  background-image: url('/public/assets/img/infolio_bg.png'); /* replace */
-  background-size: cover;
-  background-position: center;
+  background: 
+    linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+    url('/public/assets/img/infolio_bg.png') center/cover no-repeat;
 }
-.auth-bg .overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(0deg, rgba(0,0,0,.40), rgba(0,0,0,.40));
-  pointer-events: none;
-}
+.auth-bg .overlay { display: none; }
 
-/* card */
 .auth-card {
   position: relative;
   width: min(640px, 92vw);
@@ -51,11 +44,10 @@ body {
 .logo {
   height: 88px;
   width: 88px;
-  margin: 0 auto 8px;
+  margin: 0 auto 0px;
   display: block;
 }
 
-/* text */
 .title {
   text-align: center;
   font-family: 'Raleway', sans-serif;
@@ -68,16 +60,17 @@ body {
   font-family: 'Raleway', sans-serif;
   font-size: 16px;
   color: #666;
-  margin: 0 0 8px;
 }
+
 .label {
   display: block;
   font-family: 'Raleway', sans-serif;
   font-weight: 600;
-  margin: 12px 0 6px;
+  font-size: 16px; 
+  color: #666;     
+  margin: 12px 0px 12px;
 }
 
-/* inputs */
 .input {
   width: 100%;
   padding: 12px 20px;
@@ -95,7 +88,6 @@ body {
   box-shadow: 0 0 0 4px var(--ring);
 }
 
-/* buttons */
 .btn {
   border: none;
   border-radius: 999px;
@@ -103,23 +95,22 @@ body {
   background: var(--accent);
   color: var(--action);
   font-family: 'Raleway', sans-serif;
-  font-weight: 700;
-  font-size: 16px;
+  font-weight: 500;
+  font-size: 20px;
   cursor: pointer;
-  transition: background .2s, color .2s;
+
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
-.btn:focus-visible {
-  outline: 3px solid var(--ring);
-}
+
+.btn:focus-visible { outline: 3px solid var(--ring); }
+
 .btn:hover {
   background: var(--action);
   color: var(--accent);
 }
 
-
-/* layout bits */
 .actions {
-  margin-top: 18px;
+  margin: 24px;
   display: flex;
   justify-content: center;
 }
@@ -128,16 +119,107 @@ body {
   margin: 10px 0 0;
   color: #444;
   font-family: 'Raleway', sans-serif;
+  font-style: italic;
+
 }
 .switch-link {
   color: var(--accent);
   font-weight: 800;
   text-decoration: none;
 }
+
+.switch-text .switch-link { 
+  font-style: normal;
+  margin-left: 4px;
+}
+
 .switch-link:hover { text-decoration: underline; }
 
-/* responsive */
+.auth-views {
+  position: relative;
+}
+.auth-view {
+  display: none;
+}
+.auth-view.is-active {
+  display: block;
+}
+
 @media (max-width: 540px) {
   .auth-card { padding: 32px 20px; }
   .title { font-size: 22px; }
 }
+
+.auth-views {
+  overflow: hidden;
+  transition: height .28s ease;
+}
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeUpOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-8px); }
+}
+
+@keyframes revealFromTop {
+  from { opacity: 0; transform: translateY(-6px) scaleY(0.94); }
+  to   { opacity: 1; transform: translateY(0)     scaleY(1); }
+}
+
+.auth-view .field,
+.auth-view .actions {
+
+  opacity: 0;
+  transform: translateY(-8px);
+  will-change: transform, opacity;
+}
+
+.auth-view.is-active .field,
+.auth-view.is-active .actions {
+  animation: riseIn .30s ease forwards;
+}
+
+.auth-view.is-active .field:nth-of-type(1) { animation-delay: 40ms; }
+.auth-view.is-active .field:nth-of-type(2) { animation-delay: 90ms; }
+
+.auth-view.is-active .field--confirm {
+  animation: revealFromTop .30s ease forwards;
+  animation-delay: 140ms;
+}
+.auth-view.is-active .actions { animation-delay: 190ms; }
+
+.auth-view.is-leaving {
+  position: absolute;
+  inset: 0;           
+  pointer-events: none;
+  z-index: 2;     
+  background: transparent;
+}
+
+.auth-view.is-leaving .field,
+.auth-view.is-leaving .actions {
+  animation: fadeUpOut .22s ease forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-views, .field, .actions { transition: none !important; animation: none !important; }
+}
+
+.auth-view .switch-text {
+  opacity: 0;
+  transform: translateY(-8px);
+  will-change: transform, opacity;
+}
+
+.auth-view.is-active .switch-text {
+  animation: riseIn .30s ease forwards;
+  animation-delay: 230ms;
+}
+
+.auth-view.is-leaving .switch-text {
+  animation: fadeUpOut .22s ease forwards;
+}
+
