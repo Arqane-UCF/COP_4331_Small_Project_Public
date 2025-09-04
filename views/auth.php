@@ -22,7 +22,8 @@ require_once __DIR__ . '/components/button.php';
         aria-labelledby="tab-login"
         data-name="login"
       >
-        <form method="POST" action="dashboard.php" novalidate>
+          <!-- Pending Kenny to publish endpoint -->
+        <form method="POST" action="/api/login.php" novalidate>
           <div class="field">
             <?php Input("username", "text", "Username", "Enter your username..."); ?>
           </div>
