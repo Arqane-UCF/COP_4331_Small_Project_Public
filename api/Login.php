@@ -1,57 +1,43 @@
-
 <?php
+require_once "../DBManager.php";
+session_start();
 
-	$inData = getRequestInfo();
-	
-	$id = 0;
-	$username = "";
+if (isset($_SESSION["user_id"])) {
+    header("Location: dashboard.php");
+}
 
-	$conn = new mysqli("localhost", "TheBeast", "WeLoveCOP4331", "COP4331"); 	
-	if( $conn->connect_error )
-	{
-		returnWithError( $conn->connect_error );
-	}
-	else
-	{
-		$stmt = $conn->prepare("SELECT id,username FROM users WHERE username=? AND password=?");
-		$stmt->bind_param("ss", $inData["username"], $inData["password"]);
-		$stmt->execute();
-		$result = $stmt->get_result();
+if (!isset($_POST["username"]) || !isset($_POST["password"])) {
+    ?>
+    {
+        "error": "Login failed"
+    }
+    <?php
+    return;
+}
 
-		if( $row = $result->fetch_assoc()  )
-		{
-			returnWithInfo( $row['username'], $row['id'] );
-		}
-		else
-		{
-			returnWithError("No Records Found");
-		}
+$username = $_POST["username"];
+$password = $_POST["password"];
 
-		$stmt->close();
-		$conn->close();
-	}
-	
-	function getRequestInfo()
-	{
-		return json_decode(file_get_contents('php://input'), true);
-	}
+$Login = User::login(username,password);
 
-	function sendResultInfoAsJson( $obj )
-	{
-		header('Content-type: application/json');
-		echo $obj;
-	}
-	
-	function returnWithError( $err )
-	{
-		$retValue = '{"id":0,"username":"","error":"' . $err . '"}';
-		sendResultInfoAsJson( $retValue );
-	}
-	
-	function returnWithInfo( $username, $id )
-	{
-		$retValue = '{"id":' . $id . ',"username":"' . $username . '","error":""}';
-		sendResultInfoAsJson( $retValue );
-	}
-	
+if (!isset($Login)) {
+    ?>
+    {
+        "error": "Login failed"
+    } 
+    <?php
+    return;
+}
+
+$_SESSION["user_id"] = $Login->id;
+
+
+
+
+
+
 ?>
+
+{
+    "success": "Login successful"
+}
