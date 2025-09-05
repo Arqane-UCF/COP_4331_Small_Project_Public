@@ -102,12 +102,44 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // TEMP: demo route to dashboard until backend is ready
-['view-login','view-signup'].forEach(id => {
+[['view-login', "/api/Login.php"],['view-signup', "/api/Signup.php"]].forEach(([id, endpoint]) => {
   const form = document.querySelector(`#${id} form`);
   if (form) {
     form.addEventListener('submit', (e) => {
-      e.preventDefault();             
-      window.location.href = 'dashboard.php'; 
+      e.preventDefault();
+      window.location.href = 'dashboard.php';
+
+      const formData = new FormData(form);
+      if(id === "view-signup" && formData.get("password") !== formData.get("confirm"))
+          return Swal.fire({
+              title: "Password Mismatch",
+              text: "Password mismatched, please type the password again!",
+              icon: "error"
+          });
+
+      fetch(endpoint, {
+          method: 'POST',
+          headers: new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' }), // PHP compatibility purpose
+          body: new URLSearchParams(formData).toString()
+      }).then((res)=>{
+          res.json().then(data => {
+              if(!data.success)
+                  return Swal.fire({
+                      title: "Booo",
+                      text: `Uhh: ${data.error}`,
+                      icon: "error",
+                  })
+              return Swal.fire({
+                  title: "YUS",
+                  text: data.message,
+                  icon: "success"
+              })
+          });
+      }).catch(err=>{
+          if(window.Sentry)
+              Sentry.captureException(err);
+      })
+
     });
   }
 });
