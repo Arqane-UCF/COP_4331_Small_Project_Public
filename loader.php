@@ -22,8 +22,3 @@ if($S_DSN !== false) {
             'enable_logs' => true,
     ]);
 }
-?>
-
-<!-- Frontend Sentry loader stuff -->
-<script src="https://browser.sentry-cdn.com/10.8.0/bundle.tracing.replay.min.js" crossorigin="anonymous" on-lazy="no"></script>
-<script src="/assets/js/loader.js"></script>
