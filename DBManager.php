@@ -2,6 +2,7 @@
 require_once "loader.php";
 use function Sentry\logger;
 
+mysqli_report(MYSQLI_REPORT_OFF);
 class DBGlobal {
     private static $mysql;
     public static function getRawDB() {
@@ -68,16 +69,19 @@ class User {
             logger()->error(sprintf("User.login: Query for user %s failed with status: %d", $username, $statement->errno));
             return null;
         }
-        if($statement->num_rows === 0) {
+
+        $result = $statement->get_result();
+        if(!$result) {
             logger()->info(sprintf("User.login: User %s not found", $username));
             return null;
         }
 
-        $result = $statement->get_result()->fetch_assoc();
+        $result = $result->fetch_assoc();
         if(!password_verify($password, $result["password"])) {
             logger()->info(sprintf("User.login: User %s input incorrect password", $username));
             return null;
         }
+
         logger()->info(sprintf("User.login: User %s successfully authenticated", $username));
         return new User($result["id"], $result["username"]);
     }

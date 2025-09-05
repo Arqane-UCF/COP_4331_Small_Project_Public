@@ -11,5 +11,9 @@
 
   <!-- Preload libraries -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- Frontend Sentry loader stuff -->
+  <script src="https://browser.sentry-cdn.com/10.8.0/bundle.tracing.replay.min.js" crossorigin="anonymous" on-lazy="no"></script>
+  <script src="/assets/js/loader.js"></script>
 </head>
 <body>
