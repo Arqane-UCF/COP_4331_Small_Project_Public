@@ -85,8 +85,9 @@ class User {
     public static function register(string $username, string $password): ?User
     {
         logger()->debug(sprintf("User.register: Query for user %s", $username));
+        $hashpwd = password_hash($password, PASSWORD_ARGON2ID);
         $statement = DBGlobal::getRawDB()->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-        $statement->bind_param("ss", $username, $password);
+        $statement->bind_param("ss", $username, $hashpwd);
 
         if($statement->execute()) {
             logger()->info(sprintf("User.register: User %s successfully registered", $username));
