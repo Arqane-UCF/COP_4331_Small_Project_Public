@@ -61,7 +61,7 @@ class User {
     public static function login(string $username, string $password): ?User
     {
         logger()->debug(sprintf("User.login: Query for user %s", $username));
-        $statement = DBGlobal::getRawDB()->prepare("SELECT * FROM users WHERE username = '?'");
+        $statement = DBGlobal::getRawDB()->prepare("SELECT * FROM users WHERE username = ?");
         $statement->bind_param("s", $username);
 
         if(!$statement->execute()) {
@@ -211,7 +211,7 @@ class Contact {
     public function removeTag(string $tag): bool
     {
         logger()->debug(sprintf("Contact.removeTag: Query for contactID %d", $this->id));
-        $statement = DBGlobal::getRawDB()->prepare("DELETE FROM tags WHERE contactid = '?' AND value = '?'");
+        $statement = DBGlobal::getRawDB()->prepare("DELETE FROM tags WHERE contactid = ? AND value = ?");
         $statement->bind_param("is", $this->id, $tag);
 
         if(!$statement->execute()) {
