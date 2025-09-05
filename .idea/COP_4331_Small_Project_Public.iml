@@ -23,5 +23,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="bundle.tracing.replay" level="application" />
+    <orderEntry type="library" name="sweetalert2" level="application" />
   </component>
 </module>
