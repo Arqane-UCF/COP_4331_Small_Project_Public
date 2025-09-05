@@ -2,6 +2,7 @@
 require_once "loader.php";
 use function Sentry\logger;
 
+mysqli_report(MYSQLI_REPORT_OFF);
 class DBGlobal {
     private static $mysql;
     public static function getRawDB() {
