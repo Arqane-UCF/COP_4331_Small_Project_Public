@@ -2,42 +2,27 @@
 require_once "../DBManager.php";
 session_start();
 
-if (isset($_SESSION["user_id"])) {
+if (isset($_SESSION["user_id"]))
     header("Location: dashboard.php");
-}
 
 if (!isset($_POST["username"]) || !isset($_POST["password"])) {
     ?>
-    {
-        "error": "Registration failed"
-    }
+    { "success": false, "error": "Missing Fields" }
     <?php
     return;
 }
 
 $username = $_POST["username"];
 $password = $_POST["password"];
-
 $registration = User::register(username,password);
 
 if (!isset($registration)) {
     ?>
-    {
-        "error": "Registration failed"
-    } 
+    {"success": false, "error": "Registration failed, perhaps duplicate username?"}
     <?php
     return;
 }
 
 $_SESSION["user_id"] = $registration->id;
-
-
-
-
-
-
 ?>
-
-{
-    "success": "Registration successful"
-}
+{ "success": true, "message": "Registration successful" }
