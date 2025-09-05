@@ -20,10 +20,12 @@ if (!isset($Login)) {
     ?>
     {"success": false, "error": "Invalid Username/Password"} 
     <?php
+    \Sentry\logger()->flush();
     return;
 }
 
 $_SESSION["user_id"] = $Login->id;
+\Sentry\logger()->flush();
 ?>
 {"success": true, "message": "Login successful"}
 
