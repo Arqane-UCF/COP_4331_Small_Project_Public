@@ -169,12 +169,10 @@ body {
   to   { opacity: 1; transform: translateY(0)     scaleY(1); }
 }
 
-.auth-view .field,
-.auth-view .actions {
-
-  opacity: 0;
-  transform: translateY(-8px);
-  will-change: transform, opacity;
+.auth-view.is-active .field,
+.auth-view.is-active .actions {
+  opacity: 1 !important;
+  transform: none !important;
 }
 
 .auth-view.is-active .field,
