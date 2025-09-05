@@ -2,8 +2,11 @@
 require_once "../DBManager.php";
 session_start();
 
-if (isset($_SESSION["user_id"]))
-    header("Location: dashboard.php");
+if (isset($_SESSION["user_id"])) {
+    ?>
+    {"success": false, "error": "User already logged in"}
+    <?php
+}
 
 if (!isset($_POST["username"]) || !isset($_POST["password"])) {
     ?>
