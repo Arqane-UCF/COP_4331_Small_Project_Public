@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      window.location.href = 'dashboard.php';
+      //window.location.href = 'dashboard.php';
 
       const formData = new FormData(form);
       if(id === "view-signup" && formData.get("password") !== formData.get("confirm"))
