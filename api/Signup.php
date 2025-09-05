@@ -14,7 +14,7 @@ if (!isset($_POST["username"]) || !isset($_POST["password"])) {
 
 $username = $_POST["username"];
 $password = $_POST["password"];
-$registration = User::register(username,password);
+$registration = User::register($username,$password);
 
 if (!isset($registration)) {
     ?>

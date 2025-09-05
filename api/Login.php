@@ -14,7 +14,7 @@ if (!isset($_POST["username"]) || !isset($_POST["password"])) {
 
 $username = $_POST["username"];
 $password = $_POST["password"];
-$Login = User::login(username,password);
+$Login = User::login($username,$password);
 
 if (!isset($Login)) {
     ?>
