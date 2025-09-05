@@ -65,19 +65,23 @@ class User {
         $statement->bind_param("s", $username);
 
         if(!$statement->execute()) {
+            echo "STEP A";
             logger()->error(sprintf("User.login: Query for user %s failed with status: %d", $username, $statement->errno));
             return null;
         }
         if($statement->num_rows === 0) {
+            echo "STEP B";
             logger()->info(sprintf("User.login: User %s not found", $username));
             return null;
         }
 
         $result = $statement->get_result()->fetch_assoc();
         if(!password_verify($password, $result["password"])) {
+            echo "STEP C";
             logger()->info(sprintf("User.login: User %s input incorrect password", $username));
             return null;
         }
+        echo "STEP D";
         logger()->info(sprintf("User.login: User %s successfully authenticated", $username));
         return new User($result["id"], $result["username"]);
     }
