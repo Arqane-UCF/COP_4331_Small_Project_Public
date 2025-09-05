@@ -6,6 +6,7 @@ if (isset($_SESSION["user_id"])) {
     ?>
     {"success": false, "error": "User already logged in"}
     <?php
+    \Sentry\logger()->flush();
     return;
 }
 
