@@ -23,7 +23,7 @@ body {
   padding: 96px 24px;
   background: 
     linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
-    url('/assetsfolio_bg.png') center/cover no-repeat;
+    url('/assets/img/infolio_bg.png') center/cover no-repeat;
 }
 .auth-bg .overlay { display: none; }
 
@@ -171,8 +171,9 @@ body {
 
 .auth-view.is-active .field,
 .auth-view.is-active .actions {
-  opacity: 1 !important;
-  transform: none !important;
+  opacity: 0;
+  transform: translateY(-8px);
+  will-change: transform, opacity;
 }
 
 .auth-view.is-active .field,
