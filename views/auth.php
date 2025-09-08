@@ -22,7 +22,7 @@ require_once __DIR__ . '/components/button.php';
         aria-labelledby="tab-login"
         data-name="login"
       >
-        <form method="POST" action="/api/login.php" novalidate>
+        <form novalidate>
           <div class="field">
             <?php Input("username", "text", "Username", "Enter your username...", "login-username"); ?>
           </div>
@@ -47,7 +47,7 @@ require_once __DIR__ . '/components/button.php';
         data-name="signup"
         hidden
       >
-        <form method="POST" action="dashboard.php" novalidate>
+        <form novalidate>
           <div class="field">
             <?php Input("username", "text", "Username", "Enter your username...", "signup-username"); ?>
           </div>
