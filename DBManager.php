@@ -70,13 +70,12 @@ class User {
             return null;
         }
 
-        $result = $statement->get_result();
+        $result = $statement->get_result()->fetch_assoc();
         if(!$result) {
             logger()->info(sprintf("User.login: User %s not found", $username));
             return null;
         }
 
-        $result = $result->fetch_assoc();
         if(!password_verify($password, $result["password"])) {
             logger()->info(sprintf("User.login: User %s input incorrect password", $username));
             return null;
