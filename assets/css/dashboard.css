@@ -6,7 +6,7 @@
     --placeholder: rgba(7,7,46,.60);
     --ring: rgba(24,58,51,.18);
   }
-
+  
   * { box-sizing: border-box; }
   html, body { height: 100%; }
   body {
@@ -18,13 +18,13 @@
   .dashboard {
     min-height: 100%;
     display: grid;
-    place-items: center;          
-    position: relative;  
+    place-items: center;
+    position: relative;
     background:
       linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
       url('/assets/img/infolio_bg.png') center/cover no-repeat;
   }
-
+  
   .dashboard-container {
     background: var(--bg);
     border-radius: 20px;
@@ -34,15 +34,14 @@
     overflow: hidden;
   }
   
-  
   /* Header bar */
   .dashboard-header{
     display:flex; justify-content:space-between; align-items:center;
     padding: 24px;
     background: var(--accent);
     color: var(--bg);
-    border-top-left-radius: var(--radius-lg);
-    border-top-right-radius: var(--radius-lg);
+    border-top-left-radius: 20px;   /* was var(--radius-lg) */
+    border-top-right-radius: 20px;  /* was var(--radius-lg) */
   }
   .dashboard-header h1{
     font: 400 28px/1.1 Raleway, system-ui;
@@ -57,32 +56,51 @@
   
   .favorites p{ margin: 0; font: 400 18px/1.3 Kurale, serif; color: rgba(7,7,46,.6); }
   
-  /* Contacts top row */
+  /* Contacts top: stack toolbar under heading */
   .contacts-top{
-    display:flex; align-items:center; justify-content:space-between; gap: 16px;
+    display:flex;
+    flex-direction: column;   /* ⬅️ stack heading above toolbar */
+    gap: 16px;
+    align-items: stretch;     /* toolbar spans full width */
   }
-  .toolbar{ display:flex; align-items:center; gap: 12px; flex-wrap: wrap; }
-  .search{
-    display:flex; align-items:center; gap:8px; flex: 1 1 320px;
-    border: 2px solid var(--primary); border-radius: 999px; padding: 6px 12px;
+  
+  /* Toolbar row: search expands, buttons to the right */
+  .toolbar{
+    display:flex;
+    align-items:center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .toolbar .search{
+    flex: 1 1 auto;           /* ⬅️ fill the row */
+    display:flex;
+    align-items:center;
+    gap:8px;
+    border: 2px solid var(--primary);
+    border-radius: 999px;
+    padding: 6px 12px;
     background: var(--bg);
+    min-width: 0;             /* prevent overflow on small screens */
   }
-  .search input{
-    flex:1; min-width: 160px; border:0; outline:0; background:transparent;
+  .toolbar .search input{
+    flex:1;
+    min-width: 0;             /* allow shrinking */
+    border:0; outline:0; background:transparent;
     font: 400 18px/1.2 Kurale, serif; color: var(--primary);
   }
-  .icon-btn{ border:0; background:transparent; cursor:pointer; font-size: 18px; }
+  .toolbar .icon-btn{ border:0; background:transparent; cursor:pointer; font-size: 18px; flex: 0 0 auto; }
   
   /* Buttons */
   .btn{
     border:0; border-radius: 999px; padding: 8px 14px; cursor:pointer;
     font: 600 14px/1 Raleway, system-ui;
+    flex: 0 0 auto;           /* don't stretch buttons */
   }
   .btn-primary{ background: var(--primary); color: var(--bg); }
   .btn-outline{ background: var(--bg); color: var(--primary); border:2px solid var(--primary); }
   .btn-secondary{ background: var(--accent); color: var(--action); }
   
-  /* Labels row */
+  /* Labels row (legacy chips; fine to keep) */
   .labels{ margin: 16px 0; display:flex; gap:8px; flex-wrap: wrap; }
   .chip{
     border-radius: 999px; padding: 6px 12px; border: 0; cursor: pointer;
@@ -105,9 +123,7 @@
   /* View more / see less row */
   .contacts-toggle{ text-align:center; padding-top: 8px; }
   
-  /* Collapsed vs expanded heights
-     - “collapsed” caps height so the container shows ~2 rows before the toggle.
-     - “expanded” virtually unlimited so it grows to fit. */
+  /* Collapsed vs expanded heights */
   .dashboard-container.collapsed{ max-height: 900px; }
   .dashboard-container.expanded{  max-height: 5000px; }
   
@@ -115,5 +131,36 @@
   @media (max-width: 720px){
     .block{ padding: 20px; }
     .dashboard-header{ padding: 18px; }
+  }
+  
+  /* Two-column layout: left hugs content, right fills rest */
+  .contacts-split{
+    display: grid;
+    grid-template-columns: fit-content(28ch) minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+  }
+  
+  /* Filter column (vertical stack) */
+  .filters-col { /* hugs children */ }
+  .filters-group{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  /* “+ New Label” button at bottom of filter stack */
+  .new-label{ margin-top: 8px; }
+  
+  /* Contacts column */
+  .cards-col{ min-width: 0; } /* allows content to shrink properly */
+  
+  /* Mobile: stack filter above cards */
+  @media (max-width: 860px){
+    .contacts-split{
+      grid-template-columns: 1fr;
+    }
+    .filters-col{ order: -1; } /* filters appear above the grid */
   }
   

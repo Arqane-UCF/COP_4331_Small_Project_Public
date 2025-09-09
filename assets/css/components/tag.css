@@ -1,0 +1,40 @@
+:root{
+    --bg:#F9EED7; --accent:#183A33; --action:#D5DEC6; --primary:#07072E; --ring: rgba(24,58,51,.18);
+  }
+  
+  /* Base pill */
+  .tag{
+    display:inline-flex; align-items:center; justify-content:center;
+    border-radius:50px; padding:8px 16px; overflow:hidden; border:none;
+  }
+  
+  /* FILTER (interactive) — 24px Kurale + icon
+     Unselected: bg=var(--bg), text=var(--primary)
+     Selected  : bg=var(--primary), text=var(--action)
+     Smooth color transition when toggled */
+  .tag--filter{
+    background: var(--bg);
+    color: var(--primary);
+    font: 400 24px/1 Kurale, serif;
+    cursor: pointer;
+    transition: background-color .18s ease, color .18s ease;
+  }
+  .tag--filter .tag-icon{ display:inline-flex; margin-right:8px; }
+  .tag--filter.is-selected{
+    background: var(--primary);
+    color: var(--action);
+  }
+  .tag--filter:focus-visible{
+    outline: 3px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 50px;
+  }
+  
+  /* CHIP (contact card) — 16px Kurale, always filled, no hover/animation */
+  .tag--chip{
+    background: var(--primary);
+    color: var(--action);
+    font: 400 16px/1 Kurale, serif;
+    cursor: default;
+  }
+  
