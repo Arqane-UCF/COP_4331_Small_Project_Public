@@ -1,0 +1,105 @@
+:root{
+    /* fallbacks; your page can override these */
+    --bg: #F9EED7;
+    --accent: #183A33;
+    --primary: #07072E;
+    --action: #D5DEC6;
+    --radius-xl: 22px;
+    --radius-sm: 6px;
+    --ring: 2px;
+    --shadow: 0 6px 16px rgba(0,0,0,.12);
+  }
+  
+  /* Card frame */
+  .contact-card{
+    display:grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 16px;
+    align-items:start;
+  
+    width: min(100%, 640px);          /* max width, responsive */
+    padding: 16px 18px;
+    margin: 12px 0;
+  
+    background: var(--bg);
+    border-radius: var(--radius-xl);
+    outline: var(--ring) solid var(--accent);
+    outline-offset: -2px;
+    box-shadow: var(--shadow);
+  }
+  
+  /* Left column: checkbox */
+  .cc-left{ display:flex; align-items:flex-start; padding-top:4px; }
+  .cc-checkbox{ position:relative; display:inline-block; width:28px; height:28px; }
+  .cc-checkbox input{ position:absolute; inset:0; opacity:0; cursor:pointer; }
+  .cc-checkmark{
+    display:inline-block; width:28px; height:28px;
+    border-radius: var(--radius-sm);
+    outline: var(--ring) solid var(--accent);
+    background: transparent;
+  }
+  .cc-checkbox input:checked + .cc-checkmark{
+    background: var(--accent);
+  }
+  .cc-checkbox input:checked + .cc-checkmark::after{
+    content:"";
+    position:absolute; inset:4px;
+    background:
+      conic-gradient(from 315deg at 40% 55%, var(--action) 0 90deg, #0000 0) top left/50% 60% no-repeat,
+      linear-gradient(var(--action), var(--action)) 55% 62%/36% 14% no-repeat;
+    border-radius:2px;
+  }
+  
+  /* Middle column */
+  .cc-body{ min-width:0; } /* allow text wrap/truncation if needed */
+  .cc-name{
+    margin:0 0 6px 0;
+    font: 400 26px/1.15 Kurale, serif;
+    color: var(--primary);
+  }
+  .cc-email, .cc-phone{
+    margin:0; font: 400 20px/1.25 Kurale, serif; color: var(--primary);
+  }
+  .cc-created{
+    margin:6px 0 10px 0; font: 400 14px/1.2 Kurale, serif; color: color-mix(in oklab, var(--primary) 60%, transparent);
+  }
+  
+  /* Tags row (content will come later) */
+  .cc-tags{
+    display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+  }
+  .cc-tag{
+    border: none; cursor: default;
+    padding: 8px 16px; border-radius: 999px;
+    background: var(--accent); color: var(--action);
+    font: 400 14px/1 Kurale, serif;
+  }
+  .cc-tags-more{
+    font: 400 12px/1 Raleway, system-ui; color: color-mix(in oklab, var(--primary) 60%, transparent);
+  }
+  
+  /* Right column: actions */
+  .cc-actions{
+    display:flex; flex-direction:column; gap:12px; align-items:flex-end; justify-content:space-between;
+  }
+  .cc-icon{
+    appearance:none; background:transparent; border:0; padding:0; cursor:pointer;
+    line-height:0; display:inline-grid; place-items:center;
+  }
+  .cc-icon:hover svg{ transform: translateY(-1px); }
+  .cc-icon svg{ transition: transform .15s ease; }
+  .cc-delete:hover svg path{ stroke-width:1.6; }
+  
+  /* Responsive: stack actions under content when narrow */
+  @media (max-width: 520px){
+    .contact-card{
+      grid-template-columns: auto 1fr;
+    }
+    .cc-actions{
+      grid-column: 1 / -1;
+      flex-direction: row;
+      justify-content: flex-end;
+      padding-top: 6px;
+    }
+  }
+  
