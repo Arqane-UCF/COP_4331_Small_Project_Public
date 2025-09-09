@@ -1,14 +1,14 @@
 <?php
-require_once __DIR__ . '/components/_head.php';
-require_once __DIR__ . '/components/input.php';
-require_once __DIR__ . '/components/button.php';
+require_once __DIR__ . '/../assets/components/_head.php';
+require_once __DIR__ . '/../assets/components/input.php';
+require_once __DIR__ . '/../assets/components/button.php';
 ?>
 
 <div class="auth-bg">
   <div class="overlay"></div>
 
   <section class="auth-card" aria-live="polite">
-    <?php include __DIR__ . '/components/logo.php'; ?>
+    <?php include __DIR__ . '/../assets/components/logo.php'; ?>
 
     <h2 class="title js-title">Welcome back to Infolio.</h2>
     <p class="subtitle js-subtitle">Please login to your account below.</p>
@@ -70,4 +70,4 @@ require_once __DIR__ . '/components/button.php';
   </section>
 </div>
 
-<?php require_once __DIR__ . '/components/_foot.php'; ?>
+<?php require_once __DIR__ . '/../assets/components/_foot.php'; ?>
