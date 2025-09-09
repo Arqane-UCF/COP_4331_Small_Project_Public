@@ -24,10 +24,10 @@ require_once __DIR__ . '/components/button.php';
       >
         <form novalidate>
           <div class="field">
-            <?php Input("username", "text", "Username", "Enter your username..."); ?>
+            <?php Input("username", "text", "Username", "Enter your username...", "login-username"); ?>
           </div>
           <div class="field">
-            <?php Input("password", "password", "Password", "Enter your password..."); ?>
+            <?php Input("password", "password", "Password", "Enter your password...", "login-password"); ?>
           </div>
 
           <div class="actions"><?php Button("Login"); ?></div>
@@ -49,13 +49,13 @@ require_once __DIR__ . '/components/button.php';
       >
         <form novalidate>
           <div class="field">
-            <?php Input("username", "text", "Username", "Enter your username..."); ?>
+            <?php Input("username", "text", "Username", "Enter your username...", "signup-username"); ?>
           </div>
           <div class="field">
-            <?php Input("password", "password", "Password", "Enter your password..."); ?>
+            <?php Input("password", "password", "Password", "Enter your password...", "signup-password"); ?>
           </div>
           <div class="field field--confirm">
-            <?php Input("confirm", "password", "Confirm Password", "Confirm your password..."); ?>
+            <?php Input("confirm", "password", "Confirm Password", "Confirm your password...", "signup-confirm"); ?>
           </div>
 
           <div class="actions"><?php Button("Signup"); ?></div>
