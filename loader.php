@@ -22,3 +22,8 @@ if($S_DSN !== false) {
             'enable_logs' => true,
     ]);
 }
+
+// Exit Handler
+register_shutdown_function(function() {
+    \Sentry\logger()->flush();
+});

@@ -6,7 +6,6 @@ if (isset($_SESSION["user_id"])) {
     ?>
     {"success": false, "error": "User already logged in"}
     <?php
-    \Sentry\logger()->flush();
     return;
 }
 
@@ -14,7 +13,6 @@ if (!isset($_POST["username"]) || !isset($_POST["password"])) {
     ?>
     { "success": false, "error": "Missing Fields" }
     <?php
-    \Sentry\logger()->flush();
     return;
 }
 
@@ -26,12 +24,10 @@ if (!isset($Login)) {
     ?>
     {"success": false, "error": "Invalid Username/Password"} 
     <?php
-    \Sentry\logger()->flush();
     return;
 }
 
 $_SESSION["user_id"] = $Login->id;
-\Sentry\logger()->flush();
 ?>
 {"success": true, "message": "Login successful"}
 
