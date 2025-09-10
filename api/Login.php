@@ -10,6 +10,7 @@ if (isset($_SESSION["user_id"])) {
 }
 
 if (!isset($_POST["username"]) || !isset($_POST["password"])) {
+    http_response_code(400);
     ?>
     { "success": false, "error": "Missing Fields" }
     <?php
@@ -21,6 +22,7 @@ $password = $_POST["password"];
 $Login = User::login($username,$password);
 
 if (!isset($Login)) {
+    http_response_code(401);
     ?>
     {"success": false, "error": "Invalid Username/Password"} 
     <?php
