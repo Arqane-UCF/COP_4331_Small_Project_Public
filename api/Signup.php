@@ -10,6 +10,7 @@ if (isset($_SESSION["user_id"])) {
 }
 
 if (!isset($_POST["username"]) || !isset($_POST["password"])) {
+    http_response_code(400);
     ?>
     { "success": false, "error": "Missing Fields" }
     <?php
@@ -21,6 +22,7 @@ $password = $_POST["password"];
 $registration = User::register($username,$password);
 
 if (!isset($registration)) {
+    http_response_code(403);
     ?>
     {"success": false, "error": "Registration failed, perhaps duplicate username?"}
     <?php
