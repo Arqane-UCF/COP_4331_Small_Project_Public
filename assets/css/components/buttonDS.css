@@ -27,7 +27,7 @@
   /* Hover → action/bg (both variants) */
   .ds-btn:not(.is-disabled):not(:disabled):hover{
     background: var(--action);
-    color: var(--bg);
+    color: var(--primary);
   }
   
   /* Pressed → same as active (override hover) */
