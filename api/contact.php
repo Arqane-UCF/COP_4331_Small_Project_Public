@@ -29,7 +29,7 @@ $contactID = intval($contactID);
 
 switch($_SERVER["REQUEST_METHOD"]) {
     case "GET": {
-        // PULL CONTACT DATA HERE
+        // @todo: PULL CONTACT DATA HERE
         http_send_status(501);
         ?>
         Request Not Implemented!
@@ -37,7 +37,7 @@ switch($_SERVER["REQUEST_METHOD"]) {
         return;
     }
     case "POST": {
-        // ADD CONTACT DATA HERE
+        // @todo: ADD CONTACT DATA HERE
         http_send_status(501);
         ?>
         Request Not Implemented!
@@ -45,6 +45,7 @@ switch($_SERVER["REQUEST_METHOD"]) {
         return;
     }
     case "PATCH": {
+        // @todo: Update contact info
         http_send_status(501);
         ?>
         Request Not Implemented!

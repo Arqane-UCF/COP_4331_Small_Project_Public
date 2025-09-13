@@ -29,7 +29,7 @@ $contactID = intval($contactID);
 
 switch($_SERVER["REQUEST_METHOD"]) {
     case "GET": {
-        // PULL TAGS from specific contact
+        // @todo: PULL TAGS from specific contact
         http_send_status(501);
         ?>
         Request Not Implemented!
@@ -37,7 +37,7 @@ switch($_SERVER["REQUEST_METHOD"]) {
         return;
     }
     case "POST": {
-        // ADD TAG to CONTACT HERE
+        // @todo: ADD TAG to CONTACT HERE
         http_send_status(501);
         ?>
         Request Not Implemented!
@@ -45,7 +45,7 @@ switch($_SERVER["REQUEST_METHOD"]) {
         return;
     }
     case "DELETE": {
-        // Deleting specific tag from contact
+        // @todo: Deleting specific tag from contact
         http_send_status(501);
         ?>
         Request Not Implemented!
