@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="4a7d6bf3-fbbd-44ae-88de-c65a59fc8391" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DBManager.php" beforeDir="false" afterPath="$PROJECT_DIR$/DBManager.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/ToggleFavorite.php" beforeDir="false" afterPath="$PROJECT_DIR$/api/ToggleFavorite.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,7 +117,7 @@
       <workItem from="1756942678433" duration="372000" />
       <workItem from="1757021885857" duration="285000" />
       <workItem from="1757033592696" duration="737000" />
-      <workItem from="1757792773170" duration="511000" />
+      <workItem from="1757792773170" duration="696000" />
     </task>
     <servers />
   </component>
