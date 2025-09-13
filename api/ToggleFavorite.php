@@ -3,8 +3,7 @@ require_once "../DBManager.php";
 session_start();
 
 // Check if user is logged in
-$userID = $_SESSION["user_id"];
-if (!isset($userID)) {
+if (!isset($_SESSION["user_id"])) {
     ?>
     {"success": false, "error": "User not logged in"}
     <?php
@@ -21,18 +20,11 @@ if (!isset($_POST["contact_id"])) {
     return;
 }
 
-// Create contact object and toggle favorite
-$user = User::getByID($userID);
-if(!$user) {
-    ?>
-        {"success": false, "error": "User not found"}
-    <?php
-    return;
-}
+$contactId = intval($_POST["contact_id"]);
 
-$result = $user
-        ->getContactByID(intval($_POST["contact_id"]))
-        ->setFavorite();
+// Create contact object and toggle favorite
+$contact = new Contact($contactId, "", "", "", "", [], false);
+$result = $contact->setFavorite();
 
 if ($result) {
     ?>

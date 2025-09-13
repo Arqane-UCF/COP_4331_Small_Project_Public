@@ -6,15 +6,14 @@ if (isset($_SESSION["user_id"])) {
     ?>
     {"success": false, "error": "User already logged in"}
     <?php
-    \Sentry\logger()->flush();
     return;
 }
 
 if (!isset($_POST["username"]) || !isset($_POST["password"])) {
+    http_response_code(400);
     ?>
     { "success": false, "error": "Missing Fields" }
     <?php
-    \Sentry\logger()->flush();
     return;
 }
 
@@ -23,14 +22,13 @@ $password = $_POST["password"];
 $registration = User::register($username,$password);
 
 if (!isset($registration)) {
+    http_response_code(403);
     ?>
     {"success": false, "error": "Registration failed, perhaps duplicate username?"}
     <?php
-    \Sentry\logger()->flush();
     return;
 }
 
 $_SESSION["user_id"] = $registration->id;
-\Sentry\logger()->flush();
 ?>
 { "success": true, "message": "Registration successful" }
