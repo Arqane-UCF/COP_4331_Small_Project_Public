@@ -158,6 +158,39 @@ FROM contacts c LEFT JOIN tags t ON c.id = t.contactid WHERE ownerid=? %s GROUP 
 
         return $contactLists;
     }
+    public function getContactByID(int $id): ?Contact {
+        logger()->debug("User.getContactByID: UserID (%d) query contactID: %d", array($this->id, $id));
+        $statement = DBGlobal::getRawDB()->prepare("SELECT * FROM contacts WHERE id=?");
+        $statement->bind_param("i", $id);
+
+        if(!$statement->execute()) {
+            logger()->error(sprintf("User.getContactByID: UserID (%d) cause SQL Error: %d", $this->id, $statement->errno));
+            return null;
+        }
+
+        $result = $statement->get_result()->fetch_assoc();
+        if(!result) {
+            logger()->warn("User.getContactByID: ContactID (%d) not found", $id);
+            return null;
+        }
+
+        logger()->info("User.getContactByID: Successfully pulled ContactID (%d)", $id);
+        $tags = array();
+
+        logger()->debug("User.getContactByID: contactID (%d) query tags table", array($this->id, $id));
+        $statementB = DBGlobal::getRawDB()->prepare("SELECT `value` FROM tags WHERE contactid=?");
+        $statementB->bind_param("i", $id);
+
+        if($statementB->execute()) {
+            $result = $statementB->get_result();
+            while($tag = $result->fetch_assoc())
+                $tags[] = $tag["value"];
+            logger()->info("User.getContactByID: contactID (%d) successfully pulled all tags", array($id));
+        } else
+            logger()->error("User.getContactByID: contactID (%d) querying tags table cause SQL error: %d", array($this->id, $statement->errno));
+
+        return new Contact($result["id"], $result["firstName"], $result["lastName"], $result["email"], $result["phoneNum"], $tags, (bool)$result["favorite"]);
+    }
 }
 
 class Contact {
@@ -169,7 +202,7 @@ class Contact {
     private array $tags;
     private bool $isFavorite;
 
-    /** !! Do not call it outside of User.searchContact !! */
+    /** !! Do not call it outside of User class !! */
     public function __construct($id, $firstName, $lastName, $email, $phoneNum, $tags, $isFavorite)
     {
         $this->id = $id;
