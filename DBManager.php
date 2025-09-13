@@ -118,8 +118,7 @@ class User {
     /** Partial match either firstName or lastName or both. If none is supplied, we assume return entire record */
     public function searchContactByName(?string $firstName = null, ?string $lastName = null): ?array {
         $statement = null;
-        $fixedQuery = "SELECT c.id, c.firstName, c.lastName, c.email, c.phoneNum, GROUP_CONCAT(t.value) AS tags
-FROM contacts c LEFT JOIN tags t ON c.id = t.contactid WHERE ownerid=? %s GROUP BY c.id";
+        $fixedQuery = "SELECT * FROM contacts WHERE ownerid=? %s";
         if($firstName === null && $lastName === null) {
             logger()->debug(sprintf("User.searchContactByName: Query without name for userid %s", $this->id));
             $statement = DBGlobal::getRawDB()->prepare(sprintf($fixedQuery, ""));
@@ -151,10 +150,8 @@ FROM contacts c LEFT JOIN tags t ON c.id = t.contactid WHERE ownerid=? %s GROUP 
         logger()->info(sprintf("User.searchContactByName: UserID (%d) found with %d records", $this->id, $statement->num_rows));
         $result = $statement->get_result();
         $contactLists = array();
-        while($contact = $result->fetch_assoc()) {
-            $tagsList = $contact["tags"] ? explode(",", $contact["tags"]) : array();
-            $contactLists[] = new Contact($contact["id"], $contact["firstName"], $contact["lastName"], $contact["email"], $contact["phoneNum"], $tagsList,(bool)$contact["favorite"]);
-        }
+        while($contact = $result->fetch_assoc())
+            $contactLists[] = new Contact($contact["id"], $contact["firstName"], $contact["lastName"], $contact["email"], $contact["phoneNum"],(bool)$contact["favorite"]);
 
         return $contactLists;
     }
@@ -177,19 +174,7 @@ FROM contacts c LEFT JOIN tags t ON c.id = t.contactid WHERE ownerid=? %s GROUP 
         logger()->info("User.getContactByID: Successfully pulled ContactID (%d)", $id);
         $tags = array();
 
-        logger()->debug("User.getContactByID: contactID (%d) query tags table", array($this->id, $id));
-        $statementB = DBGlobal::getRawDB()->prepare("SELECT `value` FROM tags WHERE contactid=?");
-        $statementB->bind_param("i", $id);
-
-        if($statementB->execute()) {
-            $result = $statementB->get_result();
-            while($tag = $result->fetch_assoc())
-                $tags[] = $tag["value"];
-            logger()->info("User.getContactByID: contactID (%d) successfully pulled all tags", array($id));
-        } else
-            logger()->error("User.getContactByID: contactID (%d) querying tags table cause SQL error: %d", array($this->id, $statement->errno));
-
-        return new Contact($result["id"], $result["firstName"], $result["lastName"], $result["email"], $result["phoneNum"], $tags, (bool)$result["favorite"]);
+        return new Contact($result["id"], $result["firstName"], $result["lastName"], $result["email"], $result["phoneNum"], (bool)$result["favorite"]);
     }
 }
 
@@ -199,18 +184,16 @@ class Contact {
     private string $lastName;
     private string $email;
     private string $phoneNum;
-    private array $tags;
     private bool $isFavorite;
 
     /** !! Do not call it outside of User class !! */
-    public function __construct($id, $firstName, $lastName, $email, $phoneNum, $tags, $isFavorite)
+    public function __construct($id, $firstName, $lastName, $email, $phoneNum, $isFavorite)
     {
         $this->id = $id;
         $this->firstName = $firstName;
         $this->lastName = $lastName;
         $this->email = $email;
         $this->phoneNum = $phoneNum;
-        $this->tags = $tags;
         $this->isFavorite = $isFavorite;
     }
     public function __get($name) {
@@ -226,51 +209,51 @@ class Contact {
         }
     }
 
-    public function addTag(string $tag): bool
-    {
-        // For real-world project, use multi-insertion technique instead
-        logger()->debug(sprintf("Contact.addTag: Query for contactID %d", $this->id));
-        $statement = DBGlobal::getRawDB()->prepare("INSERT INTO tags (contactid, value) VALUES (?, ?)");
-        $statement->bind_param("is", $this->id, $tag);
-
-        if(!$statement->execute()) {
-            if($statement->errno === 1062)
-                logger()->info(sprintf("Contact.addTag: Duplicate tag (%s) for contactID %d", $tag, $this->id));
-            else
-                logger()->error(sprintf("Contact.addTag: Tag %s caused unhandled sql error (for contactID %d): %d", $tag, $this->id, $statement->errno));
-            return false;
-        }
-
-        logger()->info(sprintf("Contact.addTag: tag %s successfully added to contactID %d", $tag, $this->id));
-        $this->tags[] = $tag;
-        return true;
-    }
-    public function removeTag(string $tag): bool
-    {
-        logger()->debug(sprintf("Contact.removeTag: Query for contactID %d", $this->id));
-        $statement = DBGlobal::getRawDB()->prepare("DELETE FROM tags WHERE contactid = ? AND value = ?");
-        $statement->bind_param("is", $this->id, $tag);
-
-        if(!$statement->execute()) {
-            logger()->error(sprintf("Contact.removeTag: Tag %s caused unhandled sql error (for contactID %d): %d", $tag, $this->id, $statement->errno));
-            return false;
-        }
-
-        // No need to check if the number is greater than 1 because of configured database constraint
-        if($statement->affected_rows === 0) {
-            logger()->warn(sprintf("Contact.removeTag: tag %s doesn't exist for contactID %d", $tag, $this->id));
-            return false;
-        }
-
-        $arrKey = array_search($tag, $this->tags);
-        if($arrKey)
-            unset($this->tags[$arrKey]);
-        if(!$arrKey)
-            logger()->warn(sprintf("Contact.removeTag: tag %s failed to remove from contactID's (%d) current class field", $tag, $this->id));
-
-        logger()->info(sprintf("Contact.removeTag: tag %s successfully deleted from contactID %d", $tag, $this->id));
-        return true;
-    }
+//    public function addTag(string $tag): bool
+//    {
+//        // For real-world project, use multi-insertion technique instead
+//        logger()->debug(sprintf("Contact.addTag: Query for contactID %d", $this->id));
+//        $statement = DBGlobal::getRawDB()->prepare("INSERT INTO tags (contactid, value) VALUES (?, ?)");
+//        $statement->bind_param("is", $this->id, $tag);
+//
+//        if(!$statement->execute()) {
+//            if($statement->errno === 1062)
+//                logger()->info(sprintf("Contact.addTag: Duplicate tag (%s) for contactID %d", $tag, $this->id));
+//            else
+//                logger()->error(sprintf("Contact.addTag: Tag %s caused unhandled sql error (for contactID %d): %d", $tag, $this->id, $statement->errno));
+//            return false;
+//        }
+//
+//        logger()->info(sprintf("Contact.addTag: tag %s successfully added to contactID %d", $tag, $this->id));
+//        $this->tags[] = $tag;
+//        return true;
+//    }
+//    public function removeTag(string $tag): bool
+//    {
+//        logger()->debug(sprintf("Contact.removeTag: Query for contactID %d", $this->id));
+//        $statement = DBGlobal::getRawDB()->prepare("DELETE FROM tags WHERE contactid = ? AND value = ?");
+//        $statement->bind_param("is", $this->id, $tag);
+//
+//        if(!$statement->execute()) {
+//            logger()->error(sprintf("Contact.removeTag: Tag %s caused unhandled sql error (for contactID %d): %d", $tag, $this->id, $statement->errno));
+//            return false;
+//        }
+//
+//        // No need to check if the number is greater than 1 because of configured database constraint
+//        if($statement->affected_rows === 0) {
+//            logger()->warn(sprintf("Contact.removeTag: tag %s doesn't exist for contactID %d", $tag, $this->id));
+//            return false;
+//        }
+//
+//        $arrKey = array_search($tag, $this->tags);
+//        if($arrKey)
+//            unset($this->tags[$arrKey]);
+//        if(!$arrKey)
+//            logger()->warn(sprintf("Contact.removeTag: tag %s failed to remove from contactID's (%d) current class field", $tag, $this->id));
+//
+//        logger()->info(sprintf("Contact.removeTag: tag %s successfully deleted from contactID %d", $tag, $this->id));
+//        return true;
+//    }
 
     /** Reverse the current favorite status */
     public function setFavorite(): bool {
