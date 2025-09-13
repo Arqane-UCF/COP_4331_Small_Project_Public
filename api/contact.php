@@ -45,6 +45,15 @@ switch($_SERVER["REQUEST_METHOD"]) {
         return;
     }
     case "PATCH": {
+        if($_SERVER['CONTENT_TYPE'] !== "application/x-www-form-urlencoded") {
+            http_send_status(400);
+            ?>
+                {"success": false, "error": "Body Content Type must be 'application/x-www-form-urlencoded'"}
+            <?php
+            return;
+        }
+        parse_str(file_get_contents('php://input'), $_PATCH);
+
         // @todo: Update contact info
         http_send_status(501);
         ?>
