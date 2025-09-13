@@ -17,6 +17,7 @@ if(!$user) {
     <?php
     return;
 }
+
 $contactID = $_GET["contact_id"];
 if(!$contactID) {
     ?>

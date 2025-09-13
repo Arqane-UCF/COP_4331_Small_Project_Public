@@ -18,6 +18,15 @@ if(!$user) {
     return;
 }
 
+$contactID = $_GET["contact_id"];
+if(!$contactID) {
+    ?>
+    {"success": false, "error": "Contact ID not provided"}
+    <?php
+    return;
+}
+$contactID = intval($contactID);
+
 switch($_SERVER["REQUEST_METHOD"]) {
     case "GET": {
         // PULL TAGS from specific contact
