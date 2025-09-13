@@ -165,7 +165,7 @@ class User {
         }
 
         $result = $statement->get_result()->fetch_assoc();
-        if(!result) {
+        if(!$result) {
             logger()->warn("User.getContactByID: ContactID (%d) not found", $id);
             return null;
         }
