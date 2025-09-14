@@ -416,12 +416,9 @@ paths:
                     id:
                       type: integer
                       example: 456
-                    name:
+                    value:
                       type: string
                       example: "Work"
-                    color:
-                      type: string
-                      example: "#FF5733"
         "400":
           description: Bad Request - Contact ID not provided
           schema:
@@ -476,11 +473,6 @@ paths:
         in: formData
         description: The name of the tag to add
         required: true
-        type: string
-      - name: tag_color
-        in: formData
-        description: The color of the tag (hex format)
-        required: false
         type: string
       responses:
         "200":
@@ -539,13 +531,7 @@ paths:
       produces:
       - application/json
       parameters:
-      - name: contact_id
-        in: query
-        description: The ID of the contact to remove tag from
-        required: true
-        type: integer
-        format: int32
-      - name: tag_id
+      - name: id
         in: query
         description: The ID of the tag to remove
         required: true
