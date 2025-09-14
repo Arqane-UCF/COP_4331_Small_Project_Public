@@ -18,7 +18,7 @@ if(!$user) {
     return;
 }
 
-$contactID = $_GET["contact_id"];
+$contactID = $_GET["id"];
 if(!$contactID) {
     ?>
     {"success": false, "error": "Contact ID not provided"}
