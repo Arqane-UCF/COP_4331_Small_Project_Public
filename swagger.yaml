@@ -85,10 +85,18 @@ paths:
       parameters:
       - name: id
         in: query
-        description: The ID of the contact to retrieve
-        required: true
+        description: Search Specific Contact
+        required: false
         type: integer
         format: int32
+      - name: firstName
+        in: query
+        description: Partial search by first name
+        type: string
+      - name: lastName
+        in: query
+        description: Partial search by last name
+        type: string
       responses:
         "200":
           description: Contact details retrieved successfully
