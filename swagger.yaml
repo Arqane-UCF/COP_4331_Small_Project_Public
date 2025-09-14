@@ -1,0 +1,598 @@
+swagger: "2.0"
+info:
+  description: API endpoint for COP 4331 Contact Manager App (Group 12)
+  version: 1.0.0
+  title: Contact Manager API
+  contact:
+    email: ke219417@ucf.edu
+    url: https://github.com/Arqane-UCF/COP_4331_Small_Project_Public
+host: poosd.zhiyan114.com
+basePath: /api
+schemes:
+- https
+paths:
+  /Login.php:
+    post:
+      tags:
+      - Users
+      summary: Logs in to the Contact Manager
+      description: Authenticates a user and returns session/user info
+      operationId: doLogin
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      parameters:
+      - name: username
+        in: formData
+        description: The user's username
+        required: true
+        type: string
+      - name: password
+        in: formData
+        description: The user's password
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: URL Not Found
+        "500":
+          description: Server Error
+  /Signup.php:
+    post:
+      tags:
+      - Users
+      summary: Registers a new user in the Contact Manager
+      description: Creates a new user account with provided credentials
+      operationId: doSignup
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      parameters:
+      - name: username
+        in: formData
+        description: The new user's username
+        required: true
+        type: string
+      - name: password
+        in: formData
+        description: The new user's password
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Missing or invalid fields
+        "404":
+          description: URL Not Found
+        "500":
+          description: Server Error
+  /contact.php:
+    get:
+      tags:
+      - Contacts
+      summary: Get contact details
+      operationId: getContact
+      description: Retrieves detailed information for a specific contact
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: query
+        description: Search Specific Contact
+        required: false
+        type: integer
+        format: int32
+      - name: firstName
+        in: query
+        description: Partial search by first name
+        type: string
+      - name: lastName
+        in: query
+        description: Partial search by last name
+        type: string
+      responses:
+        "200":
+          description: Contact details retrieved successfully
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              contact:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 123
+                  name:
+                    type: string
+                    example: "Ethan Jasper"
+                  email:
+                    type: string
+                    example: "Ethan.Jasper@example.com"
+                  phone:
+                    type: string
+                    example: "+1-555-123-4567"
+        "400":
+          description: Bad Request - Contact ID not provided
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Contact ID not provided"
+        "401":
+          description: Unauthorized - User not logged in
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "User not logged in"
+        "404":
+          description: Not Found - User or contact not found
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Contact not found"
+    post:
+      tags:
+      - Contacts
+      summary: Create a new contact
+      operationId: createContact
+      description: Creates a new contact for the logged-in user
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      parameters:
+      - name: firstName
+        in: formData
+        description: Contact's first name
+        required: true
+        type: string
+      - name: lastName
+        in: formData
+        description: Contact's last name
+        required: true
+        type: string
+      - name: email
+        in: formData
+        description: Contact's email address
+        required: true
+        type: string
+      - name: phone
+        in: formData
+        description: Contact's phone number
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Contact created successfully
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                example: "Contact created successfully"
+              contact_id:
+                type: integer
+                example: 123
+        "400":
+          description: Bad Request - Missing required fields or invalid contact ID
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Contact ID not provided"
+        "401":
+          description: Unauthorized - User not logged in
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "User not logged in"
+        "404":
+          description: Not Found - User not found
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "User not found"
+    patch:
+      tags:
+      - Contacts
+      summary: Update contact information
+      operationId: updateContact
+      description: Updates specific fields of an existing contact
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: query
+        description: The ID of the contact to update
+        required: true
+        type: integer
+        format: int32
+      - name: firstName
+        in: formData
+        description: Contact's first name
+        required: false
+        type: string
+      - name: lastName
+        in: formData
+        description: Contact's last name
+        type: string
+      - name: email
+        in: formData
+        description: Contact's updated email address
+        required: false
+        type: string
+      - name: phone
+        in: formData
+        description: Contact's updated phone number
+        required: false
+        type: string
+      responses:
+        "200":
+          description: Contact updated successfully
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                example: "Contact updated successfully"
+        "400":
+          description: Bad Request - Invalid content type or missing contact ID
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Body Content Type must be 'application/x-www-form-urlencoded'"
+        "401":
+          description: Unauthorized - User not logged in
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "User not logged in"
+        "404":
+          description: Not Found - User or contact not found
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Contact not found"
+    delete:
+      tags:
+      - Contacts
+      summary: Delete a contact
+      operationId: deleteContact
+      description: Permanently deletes a contact from the user's contact list
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: query
+        description: The ID of the contact to delete
+        required: true
+        type: integer
+        format: int32
+      responses:
+        "200":
+          description: Contact deleted successfully
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                example: "Contact Deleted!"
+        "400":
+          description: Bad Request - Contact ID not provided
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Contact ID not provided"
+        "401":
+          description: Unauthorized - User not logged in
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "User not logged in"
+        "404":
+          description: Not Found - User or contact not found
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Contact not found"
+        "500":
+          description: Server Error - Failed to delete contact
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Failed to delete contact"
+  /tag.php:
+    get:
+      tags:
+      - Tags
+      summary: Get contact tags
+      operationId: getContactTags
+      description: Retrieves all tags associated with a specific contact
+      produces:
+      - application/json
+      parameters:
+      - name: contact_id
+        in: query
+        description: The ID of the contact to retrieve tags for
+        required: true
+        type: integer
+        format: int32
+      responses:
+        "200":
+          description: Tags retrieved successfully
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              tags:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 456
+                    name:
+                      type: string
+                      example: "Work"
+                    color:
+                      type: string
+                      example: "#FF5733"
+        "400":
+          description: Bad Request - Contact ID not provided
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Contact ID not provided"
+        "401":
+          description: Unauthorized - User not logged in
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "User not logged in"
+        "404":
+          description: Not Found - User or contact not found
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Contact not found"
+    post:
+      tags:
+      - Tags
+      summary: Add tag to contact
+      operationId: addTagToContact
+      description: Associates a tag with a specific contact
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      parameters:
+      - name: contact_id
+        in: query
+        description: The ID of the contact to add tag to
+        required: true
+        type: integer
+        format: int32
+      - name: tag_name
+        in: formData
+        description: The name of the tag to add
+        required: true
+        type: string
+      - name: tag_color
+        in: formData
+        description: The color of the tag (hex format)
+        required: false
+        type: string
+      responses:
+        "200":
+          description: Tag added to contact successfully
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                example: "Tag added successfully"
+              tag_id:
+                type: integer
+                example: 456
+        "400":
+          description: Bad Request - Missing required fields
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Contact ID not provided"
+        "401":
+          description: Unauthorized - User not logged in
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "User not logged in"
+        "404":
+          description: Not Found - User or contact not found
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Contact not found"
+    delete:
+      tags:
+      - Tags
+      summary: Remove tag from contact
+      operationId: removeTagFromContact
+      description: Removes a specific tag from a contact
+      produces:
+      - application/json
+      parameters:
+      - name: contact_id
+        in: query
+        description: The ID of the contact to remove tag from
+        required: true
+        type: integer
+        format: int32
+      - name: tag_id
+        in: query
+        description: The ID of the tag to remove
+        required: true
+        type: integer
+        format: int32
+      responses:
+        "200":
+          description: Tag removed from contact successfully
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                example: "Tag removed successfully"
+        "400":
+          description: Bad Request - Missing required parameters
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Contact ID not provided"
+        "401":
+          description: Unauthorized - User not logged in
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "User not logged in"
+        "404":
+          description: Not Found - User, contact, or tag not found
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Tag not found"
