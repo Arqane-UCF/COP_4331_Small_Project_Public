@@ -208,6 +208,49 @@ class Contact {
         }
     }
 
+    // Stacked Data Update Method
+    public function setName(?string $firstName = null, ?string $lastName = null): Contact {
+        if($firstName)
+            $this->firstName = $firstName;
+        if($lastName)
+            $this->lastName = $lastName;
+        return $this;
+    }
+    public function setEmail(string $email): Contact {
+        $this->email = $email;
+        return $this;
+    }
+    public function setPhoneNum(string $phoneNum): Contact {
+        $this->phoneNum = $phoneNum;
+        return $this;
+    }
+    public function setFavorite(bool $isFavorite): Contact {
+        $this->isFavorite = $isFavorite;
+        return $this;
+    }
+    public function save(): bool {
+        logger()->debug("Contact.save: Query for contactID %d", [$this->id]);
+        $statement = DBGlobal::getRawDB()->prepare("UPDATE contacts SET firstName=?, lastName=?, email=?, phoneNum=? WHERE id=?");
+        $statement->bind_param("sssd", $this->firstName, $this->lastName, $this->email, $this->phoneNum, $this->id);
+
+        if(!$statement->execute()) {
+            logger()->error("Contact.save: ContactID (%d) caused unhandled sql error: %d", [$this->id, $statement->errno]);
+            return false;
+        }
+
+        if($statement->affected_rows === 0) {
+            logger()->error("Contact.save: ContactID (%d) potentially not found??", [$this->id]);
+            return false;
+        }
+
+        logger()->info("Contact.save: Contact %id successfully updated", [$this->id]);
+        return true;
+    }
+
+
+
+    // Below comment code is used as reference to implement tag endpoint
+
 //    public function addTag(string $tag): bool
 //    {
 //        // For real-world project, use multi-insertion technique instead
@@ -255,26 +298,6 @@ class Contact {
 //    }
 
     /** Reverse the current favorite status */
-    public function setFavorite(): bool {
-        logger()->debug(sprintf("Contact.setFavorite: Query for contactID %d", $this->id));
-        $revFavState = $this->isFavorite ? 0 : 1;
-        $statement = DBGlobal::getRawDB()->prepare("UPDATE contacts SET favorite = ? WHERE id = ?");
-        $statement->bind_param("ii", $revFavState, $this->id);
-
-        if(!$statement->execute()) {
-            logger()->error(sprintf("Contact.setFavorite: Changing favorite status for contactID (%d) cause SQL Error: %d", $this->id, $statement->errno));
-            return false;
-        }
-
-        if($statement->affected_rows === 0) {
-            logger()->warn(sprintf("Contact.setFavorite: contactID (%d) not found", $this->id));
-            return false;
-        }
-
-        $this->isFavorite = $revFavState;
-        logger()->info(sprintf("Contact.setFavorite: contactID (%d) favorite status changed to %d", $this->id, $revFavState));
-        return true;
-    }
     /** Delete the contact record */
     public function destroy(): bool {
         logger()->debug(sprintf("Contact.destroy: Query for contactID %d", $this->id));

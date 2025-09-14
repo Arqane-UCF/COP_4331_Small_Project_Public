@@ -52,12 +52,36 @@ switch($_SERVER["REQUEST_METHOD"]) {
             <?php
             return;
         }
-        parse_str(file_get_contents('php://input'), $_PATCH);
 
-        // @todo: Update contact info
-        http_send_status(501);
+        parse_str(file_get_contents('php://input'), $_PATCH);
+        if(empty($_PATCH)) {
+            http_send_status(400);
+            ?>
+            {"success": false, "error": "Empty Body"}
+            <?php
+            return;
+        }
+
+        $contact = $user->getContactByID($contactID);
+        if($_PATCH["firstName"])
+            $contact->setName($_PATCH["firstName"]);
+        if($_PATCH["lastName"])
+            $contact->setName(lastName: $_PATCH["lastName"]);
+        if($_PATCH["email"])
+            $contact->setEmail($_PATCH["email"]);
+        if($_PATCH["phone"])
+            $contact->setPhoneNum($_PATCH["phone"]);
+        if($_PATCH["favorite"])
+            $contact->setFavorite(boolval($_PATCH["favorite"]));
+
+        if(!$contact->save()) {
+            http_send_status(500);
+            ?>
+                {"success": false, "error": "Contact not saved. Server Issues?"}
+            <?php
+        }
         ?>
-        Request Not Implemented!
+            {"success": true, "message": "Contact successfully Updated"}
         <?php
         return;
     }
