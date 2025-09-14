@@ -48,7 +48,7 @@ switch($_SERVER["REQUEST_METHOD"]) {
         if($_SERVER['CONTENT_TYPE'] !== "application/x-www-form-urlencoded") {
             http_send_status(400);
             ?>
-                {"success": false, "error": "Body Content Type must be 'application/x-www-form-urlencoded'"}
+                {"success": false, "error": "Content Type must be 'application/x-www-form-urlencoded'"}
             <?php
             return;
         }
