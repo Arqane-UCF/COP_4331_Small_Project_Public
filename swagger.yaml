@@ -83,7 +83,7 @@ paths:
       produces:
       - application/json
       parameters:
-      - name: contact_id
+      - name: id
         in: query
         description: The ID of the contact to retrieve
         required: true
@@ -157,7 +157,7 @@ paths:
       produces:
       - application/json
       parameters:
-      - name: contact_id
+      - name: id
         in: query
         description: The contact ID (for routing purposes)
         required: true
@@ -237,7 +237,7 @@ paths:
       produces:
       - application/json
       parameters:
-      - name: contact_id
+      - name: id
         in: query
         description: The ID of the contact to update
         required: true
@@ -312,7 +312,7 @@ paths:
       produces:
       - application/json
       parameters:
-      - name: contact_id
+      - name: id
         in: query
         description: The ID of the contact to delete
         required: true
