@@ -165,26 +165,25 @@ paths:
       produces:
       - application/json
       parameters:
-      - name: id
-        in: query
-        description: The contact ID (for routing purposes)
-        required: true
-        type: integer
-        format: int32
-      - name: name
+      - name: firstName
         in: formData
-        description: Contact's full name
+        description: Contact's first name
+        required: true
+        type: string
+      - name: lastName
+        in: formData
+        description: Contact's last name
         required: true
         type: string
       - name: email
         in: formData
         description: Contact's email address
-        required: false
+        required: true
         type: string
       - name: phone
         in: formData
         description: Contact's phone number
-        required: false
+        required: true
         type: string
       responses:
         "200":
@@ -251,10 +250,14 @@ paths:
         required: true
         type: integer
         format: int32
-      - name: name
+      - name: firstName
         in: formData
-        description: Contact's updated full name
+        description: Contact's first name
         required: false
+        type: string
+      - name: lastName
+        in: formData
+        description: Contact's last name
         type: string
       - name: email
         in: formData
