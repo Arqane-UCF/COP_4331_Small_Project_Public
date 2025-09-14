@@ -1,13 +1,11 @@
 swagger: "2.0"
 info:
-  description: This is the API documentation for the COP 4331 Contact Manager App
+  description: API endpoint for COP 4331 Contact Manager App (Group 12)
   version: 1.0.0
   title: Contact Manager API
   contact:
     email: ke219417@ucf.edu
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
+    url: https://github.com/Arqane-UCF/COP_4331_Small_Project_Public
 host: poosd.zhiyan114.com
 basePath: /api
 schemes:
