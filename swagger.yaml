@@ -73,69 +73,6 @@ paths:
           description: URL Not Found
         "500":
           description: Server Error
-  /ToggleFavorite.php:
-    post:
-      tags:
-      - Contacts
-      summary: Toggle favorite status of a contact
-      description: Toggles the favorite status of a contact for the logged-in user
-      operationId: toggleFavorite
-      consumes:
-      - application/x-www-form-urlencoded
-      produces:
-      - application/json
-      parameters:
-      - name: contact_id
-        in: formData
-        description: The ID of the contact to toggle favorite status
-        required: true
-        type: integer
-        format: int32
-      responses:
-        "200":
-          description: Favorite status successfully updated
-          schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: true
-              message:
-                type: string
-                example: "Favorite status updated"
-        "400":
-          description: Bad Request - Missing required fields
-          schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: false
-              error:
-                type: string
-                example: "Missing contact_id"
-        "401":
-          description: Unauthorized - User not logged in
-          schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: false
-              error:
-                type: string
-                example: "User not logged in"
-        "500":
-          description: Server Error - Failed to update favorite status
-          schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: false
-              error:
-                type: string
-                example: "Failed to update favorite status"
   /contact.php:
     get:
       tags:
@@ -437,18 +374,6 @@ paths:
               error:
                 type: string
                 example: "Failed to delete contact"
-    put:
-      tags:
-      - Contacts
-      summary: Replace contact (Not Supported)
-      operationId: replaceContact
-      description: PUT method is not supported for this endpoint
-      responses:
-        "405":
-          description: Method Not Allowed - PUT is not supported
-          schema:
-            type: string
-            example: "Not Supported"
   /tag.php:
     get:
       tags:
@@ -662,27 +587,3 @@ paths:
               error:
                 type: string
                 example: "Tag not found"
-    patch:
-      tags:
-      - Tags
-      summary: Update tag (Not Supported)
-      operationId: updateTag
-      description: PATCH method is not supported for this endpoint
-      responses:
-        "405":
-          description: Method Not Allowed - PATCH is not supported
-          schema:
-            type: string
-            example: "Not Supported"
-    put:
-      tags:
-      - Tags
-      summary: Replace tag (Not Supported)
-      operationId: replaceTag
-      description: PUT method is not supported for this endpoint
-      responses:
-        "405":
-          description: Method Not Allowed - PUT is not supported
-          schema:
-            type: string
-            example: "Not Supported"
