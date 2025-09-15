@@ -18,9 +18,10 @@
 <div id="swagger-ui"></div>
 <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js" crossorigin></script>
 <script>
+    const RNG=(m,n)=>Math.random()*(n-m)+n;
     window.onload = () => {
         window.ui = SwaggerUIBundle({
-            url: 'https://poosd.zhiyan114.com/swagger.yaml',
+            url: `https://poosd.zhiyan114.com/swagger.yaml?${RNG(100000,1000000)}`,
             dom_id: '#swagger-ui',
         });
     };
