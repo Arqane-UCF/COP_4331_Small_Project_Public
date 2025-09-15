@@ -90,7 +90,39 @@ switch($_SERVER["REQUEST_METHOD"]) {
     
     
     case "POST": {
+        if(empty($_POST["firstName"]) || empty($_POST["lastName"]) || empty($_POST["email"]) || empty($_POST["phone"])) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "error" => "All fields (firstName, lastName, email, phone) are required"]);
+            return;
+        }
+
+        $firstName = trim($_POST["firstName"]);
+        $lastName = trim($_POST["lastName"]);
+        $email = trim($_POST["email"]);
+        $phone = trim($_POST["phone"]);
+
+        $newContact = Contact::create($user->id, $firstName, $lastName, $email, $phone, false);
         
+        if(!$newContact) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "error" => "Failed to create contact"]);
+            return;
+        }
+
+        echo json_encode([
+            "success" => true,
+            "message" => "Contact created successfully",
+            "contact" => [
+                [
+                "id" => $newContact->id,
+                "firstName" => $newContact->firstName,
+                "lastName" => $newContact->lastName,
+                "email" => $newContact->email,
+                "phone" => $newContact->phoneNum,
+                ]
+            ]
+        ]);
+        return;
     }
     case "PATCH": {
         if($_SERVER['CONTENT_TYPE'] !== "application/x-www-form-urlencoded") {
