@@ -19,7 +19,7 @@ if(!$user) {
 }
 
 $contactID = $_GET["id"];
-if(!$contactID) {
+if(!$contactID && $_SERVER["REQUEST_METHOD"] !== "GET") {
     ?>
     {"success": false, "error": "Contact ID not provided"}
     <?php
