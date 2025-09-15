@@ -195,6 +195,32 @@ class Contact {
         $this->phoneNum = $phoneNum;
         $this->isFavorite = $isFavorite;
     }
+    public static function create(int $user_id, string $firstName, string $lastName, string $email, string $phoneNum, ?bool $isFavorite = false): ?Contact {
+        logger()->debug("Contact.create: Query for contact %d", [$user_id]);
+        $statement = DBGlobal::getRawDB()->prepare("INSERT INTO contacts (ownerid, firstName, lastName, email, phoneNum, favorite) VALUES (?, ?, ?, ?, ?, ?)");
+        $favInt = (bool)$isFavorite;
+        $statement->bind_param("issssi", $user_id, $firstName, $lastName, $email, $phoneNum, $favInt);
+
+        if(!$statement->execute()) {
+            logger()->error("Contact.create: Query failed for userID (%d) with err: %d", [$user_id, $statement->errno]);
+            return null;
+        }
+
+        if($statement->affected_rows === 0) {
+            logger()->error("Failed to create contact for userID %d", [$user_id]);
+            return null;
+        }
+
+        logger()->info("Contact.create: Successfully added contactID (%d) for user %d", [$statement->insert_id, $user_id]);
+        return new Contact(
+            $statement->insert_id,
+            $firstName,
+            $lastName,
+            $email,
+            $phoneNum,
+            $isFavorite
+        );
+    }
     public function __get($name) {
         switch($name) {
             case "id": return $this->id;
