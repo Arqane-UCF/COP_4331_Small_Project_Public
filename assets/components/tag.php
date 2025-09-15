@@ -34,3 +34,41 @@ if (!function_exists('render_tag')) {
     }
   }
 }
+
+/*
+=====================================================
+TAG ENDPOINTS (to implement later)
+
+Expected by /assets/js/manageTags.js:
+
+1) GET /tags/list.php
+   - Returns: JSON array of tags
+     [
+       {"id": 1, "label": "Work"},
+       {"id": 2, "label": "Friends"}
+     ]
+   - TODO: Pull from DB, scoped to current owner if needed.
+
+2) POST /tags/create.php
+   - Body (JSON): {"label": "School"}
+   - Behavior:
+       * Trim label
+       * Reject empty
+       * Case-insensitive duplicate check
+       * Insert & return created tag
+   - Returns (JSON): {"id": 123, "label": "School"}
+   - Status codes: 201 on success, 409 on duplicate, 400 on bad input
+
+3) DELETE /tags/delete.php?id=123
+   - Behavior:
+       * Remove tag (and disassociate from all contacts)
+   - Returns: 204 No Content on success
+   - Status codes: 404 if missing/not found, 500 on DB failure
+
+Security:
+   * Require logged-in session (ownerId) and validate ownership.
+   * CSRF token on POST/DELETE if you have a framework for it.
+
+=====================================================
+*/
+

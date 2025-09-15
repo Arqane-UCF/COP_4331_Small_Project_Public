@@ -1,4 +1,8 @@
+console.log("auth.js loaded");
+
 document.addEventListener('DOMContentLoaded', () => {
+
+  console.log("auth.js init");
   const wrapper = document.querySelector('.auth-views');
   const titleEl = document.querySelector('.js-title');
   const subEl   = document.querySelector('.js-subtitle');
@@ -16,6 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let current = (location.hash.replace('#','') === 'signup') ? 'signup' : 'login';
 
+
+  
   function setView(viewName, push = true) {
     if (viewName !== 'login' && viewName !== 'signup') return;
     if (viewName === current) return;

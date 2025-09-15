@@ -164,3 +164,11 @@
     .filters-col{ order: -1; } /* filters appear above the grid */
   }
   
+  .filters-header {
+    font-weight: normal;      
+    margin: 0;                
+    margin-top: 0.75rem;      
+    padding: 0.25rem 0;       
+    color: var(--primary);    
+  }
+  
