@@ -113,13 +113,11 @@ switch($_SERVER["REQUEST_METHOD"]) {
             "success" => true,
             "message" => "Contact created successfully",
             "contact" => [
-                [
                 "id" => $newContact->id,
                 "firstName" => $newContact->firstName,
                 "lastName" => $newContact->lastName,
                 "email" => $newContact->email,
                 "phone" => $newContact->phoneNum,
-                ]
             ]
         ]);
         return;
