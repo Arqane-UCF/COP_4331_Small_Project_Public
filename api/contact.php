@@ -18,31 +18,79 @@ if(!$user) {
     return;
 }
 
-$contactID = $_GET["id"];
-if(!$contactID && $_SERVER["REQUEST_METHOD"] !== "GET") {
-    ?>
-    {"success": false, "error": "Contact ID not provided"}
-    <?php
-    return;
+// Get search parameters (optional)
+$firstName = $_GET["firstName"] ?? null;
+$lastName = $_GET["lastName"] ?? null;
+$contactID = $_GET["id"] ?? null;
+
+// If contactID is provided, convert to int
+if($contactID) {
+    $contactID = intval($contactID);
 }
-$contactID = intval($contactID);
 
 switch($_SERVER["REQUEST_METHOD"]) {
     case "GET": {
-        // @todo: PULL CONTACT DATA HERE
-        http_send_status(501);
-        ?>
-        Request Not Implemented!
-        <?php
+        // If contactID is provided, get specific contact
+        if($contactID) {
+            $contact = $user->getContactByID($contactID);
+            if(!$contact) {
+                http_response_code(404);
+                echo json_encode(["success" => false, "error" => "Contact not found"]);
+                return;
+            }
+            
+            // Combine first and last name into a single field
+            $fullName = trim($contact->firstName . " " . $contact->lastName);
+            
+            http_response_code(200);
+            echo json_encode([
+                "success" => true,
+                "contacts" => [
+                    [
+                        "id" => $contact->id,
+                        "name" => $fullName,
+                        "email" => $contact->email,
+                        "phone" => $contact->phoneNum,
+                        "isFavorite" => $contact->isFavorite
+                    ]
+                ]
+            ]);
+            return;
+        }
+        
+        // Otherwise, search contacts by name (or get all if no search parameters)
+        $contacts = $user->searchContactByName($firstName, $lastName);
+        
+        if($contacts === null) {
+            http_response_code(500);
+            echo json_encode(["success" => false, "error" => "Database error occurred"]);
+            return;
+        }
+        
+        // Format contacts for response
+        $contactList = [];
+        foreach($contacts as $contact) {
+            $fullName = trim($contact->firstName . " " . $contact->lastName);
+            $contactList[] = [
+                "id" => $contact->id,
+                "name" => $fullName,
+                "email" => $contact->email,
+                "phone" => $contact->phoneNum,
+                "isFavorite" => $contact->isFavorite
+            ];
+        }
+        
+        http_response_code(200);
+        echo json_encode([
+            "success" => true,
+            "contacts" => $contactList
+        ]);
         return;
     }
+    
+    
     case "POST": {
-        // @todo: ADD CONTACT DATA HERE
-        http_send_status(501);
-        ?>
-        Request Not Implemented!
-        <?php
-        return;
+        
     }
     case "PATCH": {
         if($_SERVER['CONTENT_TYPE'] !== "application/x-www-form-urlencoded") {
