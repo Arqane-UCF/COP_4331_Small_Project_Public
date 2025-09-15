@@ -93,6 +93,14 @@ switch($_SERVER["REQUEST_METHOD"]) {
         
     }
     case "PATCH": {
+        if(!$contactID) {
+            http_response_code(400);
+            ?>
+            {"success": false, "error": "Contact ID not provided"}
+            <?php
+            return;
+        }
+
         if($_SERVER['CONTENT_TYPE'] !== "application/x-www-form-urlencoded") {
             http_send_status(400);
             ?>
@@ -134,6 +142,14 @@ switch($_SERVER["REQUEST_METHOD"]) {
         return;
     }
     case "DELETE": {
+        if(!$contactID) {
+            http_response_code(400);
+            ?>
+            {"success": false, "error": "Contact ID not provided"}
+            <?php
+            return;
+        }
+
         $contact = $user->getContactByID($contactID);
         if(!$contact) {
             http_send_status(404);
