@@ -4,7 +4,6 @@ info:
   version: 1.0.0
   title: Contact Manager API
   contact:
-    email: ke219417@ucf.edu
     url: https://github.com/Arqane-UCF/COP_4331_Small_Project_Public
 host: poosd.zhiyan114.com
 basePath: /api
@@ -77,7 +76,7 @@ paths:
       - Contacts
       summary: Get contact details
       operationId: getContact
-      description: Retrieves detailed information for a specific contact
+      description: Retrieves detailed information for a specific contact. If no parameter is given, all contact information, associated with the user, will be returned
       produces:
       - application/json
       parameters:
@@ -104,21 +103,23 @@ paths:
               success:
                 type: boolean
                 example: true
-              contact:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                    example: 123
-                  name:
-                    type: string
-                    example: "Ethan Jasper"
-                  email:
-                    type: string
-                    example: "Ethan.Jasper@example.com"
-                  phone:
-                    type: string
-                    example: "+1-555-123-4567"
+              contacts:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 123
+                    name:
+                      type: string
+                      example: "Ethan Jasper"
+                    email:
+                      type: string
+                      example: "Ethan.Jasper@example.com"
+                    phone:
+                      type: string
+                      example: "+1-555-123-4567"
         "400":
           description: Bad Request - Contact ID not provided
           schema:
@@ -195,11 +196,11 @@ paths:
               message:
                 type: string
                 example: "Contact created successfully"
-              contact_id:
+              id:
                 type: integer
                 example: 123
         "400":
-          description: Bad Request - Missing required fields or invalid contact ID
+          description: Bad Request - Missing required fields
           schema:
             type: object
             properties:
@@ -208,7 +209,7 @@ paths:
                 example: false
               error:
                 type: string
-                example: "Contact ID not provided"
+                example: "Missing Fields"
         "401":
           description: Unauthorized - User not logged in
           schema:
@@ -469,7 +470,7 @@ paths:
         required: true
         type: integer
         format: int32
-      - name: tag_name
+      - name: value
         in: formData
         description: The name of the tag to add
         required: true
