@@ -111,13 +111,7 @@ switch($_SERVER["REQUEST_METHOD"]) {
         echo json_encode([
             "success" => true,
             "message" => "Contact created successfully",
-            "contact" => [
-                "id" => $newContact->id,
-                "firstName" => $newContact->firstName,
-                "lastName" => $newContact->lastName,
-                "email" => $newContact->email,
-                "phone" => $newContact->phoneNum,
-            ]
+            "id" => $newContact->id,
         ]);
         return;
     }
