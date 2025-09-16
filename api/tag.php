@@ -197,6 +197,7 @@ switch($_SERVER["REQUEST_METHOD"]) {
         return;
     }
 
+    case "PUT":
     case "PATCH": {
         // Don't worry about implementing this
         http_response_code(405);
@@ -206,14 +207,6 @@ switch($_SERVER["REQUEST_METHOD"]) {
         return;
     }
 
-    case "PUT": {
-        // Don't worry about implementing this
-        http_response_code(405);
-        ?>
-        Not Supported
-        <?php
-        return;
-    }
     default:
         return; // prob OPTIONS/HEAD Method
 }

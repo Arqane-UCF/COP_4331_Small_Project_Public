@@ -131,7 +131,7 @@ switch($_SERVER["REQUEST_METHOD"]) {
         }
 
         if($_SERVER['CONTENT_TYPE'] !== "application/x-www-form-urlencoded") {
-            http_send_status(400);
+            http_response_code(400);
             ?>
                 {"success": false, "error": "Content Type must be 'application/x-www-form-urlencoded'"}
             <?php
@@ -140,7 +140,7 @@ switch($_SERVER["REQUEST_METHOD"]) {
 
         parse_str(file_get_contents('php://input'), $_PATCH);
         if(empty($_PATCH)) {
-            http_send_status(400);
+            http_response_code(400);
             ?>
             {"success": false, "error": "Empty Body"}
             <?php
@@ -160,7 +160,7 @@ switch($_SERVER["REQUEST_METHOD"]) {
             $contact->setFavorite(boolval($_PATCH["favorite"]));
 
         if(!$contact->save()) {
-            http_send_status(500);
+            http_response_code(500);
             ?>
                 {"success": false, "error": "Contact not saved. Server Issues?"}
             <?php
@@ -181,7 +181,7 @@ switch($_SERVER["REQUEST_METHOD"]) {
 
         $contact = $user->getContactByID($contactID);
         if(!$contact) {
-            http_send_status(404);
+            http_response_code(404);
             ?>
             {"success": false, "error": "Contact not found"}
             <?php
@@ -189,7 +189,7 @@ switch($_SERVER["REQUEST_METHOD"]) {
         }
 
         $contact->destroy();
-        http_send_status(200);
+        http_response_code(200);
         ?>
         {"success": true, "message": "Contact Deleted!"}
         <?php
@@ -197,7 +197,7 @@ switch($_SERVER["REQUEST_METHOD"]) {
     }
     case "PUT": {
         // Don't worry about implementing this
-        http_send_status(405);
+        http_response_code(405);
         ?>
         Not Supported
         <?php
