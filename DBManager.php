@@ -10,25 +10,6 @@ class DBGlobal {
             return DBGlobal::$mysql = mysqli_connect("localhost", getenv("DB_USERNAME"), getenv("DB_PASSWORD"), getenv("DB_USERNAME"));
         return DBGlobal::$mysql;
     }
-
-    /** Return array of tags uniquely from the DB */
-    public static function getAllTags(): ?array
-    {
-        logger()->debug("DBGlobal.getAllTags: Query tag table");
-        $statement = DBGlobal::getRawDB()->prepare("SELECT DISTINCT `value` FROM tags");
-
-        if($statement->execute()) {
-            $res = $statement->get_result();
-            $data = array();
-            while($tag = $res->fetch_assoc())
-                $data[] = $tag['value'];
-            logger()->info("DBGlobal.getAllTags: Operation Success!");
-            return $data;
-        }
-
-        logger()->error(sprintf("DBGlobal.getAllTags: Query Failed, SQL Err: %d", $statement->errno));
-        return null;
-    }
 }
 
 class User {
@@ -273,57 +254,6 @@ class Contact {
         return true;
     }
 
-
-
-    // Below comment code is used as reference to implement tag endpoint
-
-//    public function addTag(string $tag): bool
-//    {
-//        // For real-world project, use multi-insertion technique instead
-//        logger()->debug(sprintf("Contact.addTag: Query for contactID %d", $this->id));
-//        $statement = DBGlobal::getRawDB()->prepare("INSERT INTO tags (contactid, value) VALUES (?, ?)");
-//        $statement->bind_param("is", $this->id, $tag);
-//
-//        if(!$statement->execute()) {
-//            if($statement->errno === 1062)
-//                logger()->info(sprintf("Contact.addTag: Duplicate tag (%s) for contactID %d", $tag, $this->id));
-//            else
-//                logger()->error(sprintf("Contact.addTag: Tag %s caused unhandled sql error (for contactID %d): %d", $tag, $this->id, $statement->errno));
-//            return false;
-//        }
-//
-//        logger()->info(sprintf("Contact.addTag: tag %s successfully added to contactID %d", $tag, $this->id));
-//        $this->tags[] = $tag;
-//        return true;
-//    }
-//    public function removeTag(string $tag): bool
-//    {
-//        logger()->debug(sprintf("Contact.removeTag: Query for contactID %d", $this->id));
-//        $statement = DBGlobal::getRawDB()->prepare("DELETE FROM tags WHERE contactid = ? AND value = ?");
-//        $statement->bind_param("is", $this->id, $tag);
-//
-//        if(!$statement->execute()) {
-//            logger()->error(sprintf("Contact.removeTag: Tag %s caused unhandled sql error (for contactID %d): %d", $tag, $this->id, $statement->errno));
-//            return false;
-//        }
-//
-//        // No need to check if the number is greater than 1 because of configured database constraint
-//        if($statement->affected_rows === 0) {
-//            logger()->warn(sprintf("Contact.removeTag: tag %s doesn't exist for contactID %d", $tag, $this->id));
-//            return false;
-//        }
-//
-//        $arrKey = array_search($tag, $this->tags);
-//        if($arrKey)
-//            unset($this->tags[$arrKey]);
-//        if(!$arrKey)
-//            logger()->warn(sprintf("Contact.removeTag: tag %s failed to remove from contactID's (%d) current class field", $tag, $this->id));
-//
-//        logger()->info(sprintf("Contact.removeTag: tag %s successfully deleted from contactID %d", $tag, $this->id));
-//        return true;
-//    }
-
-    /** Reverse the current favorite status */
     /** Delete the contact record */
     public function destroy(): bool {
         logger()->debug(sprintf("Contact.destroy: Query for contactID %d", $this->id));
@@ -344,6 +274,4 @@ class Contact {
         logger()->info(sprintf("Contact.destroy: contactID (%d) successfully deleted", $this->id));
         return true;
     }
-
-    // I'm assuming contact information isn't designed to be changed afterward?
 }
