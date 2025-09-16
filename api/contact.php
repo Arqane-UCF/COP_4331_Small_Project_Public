@@ -87,8 +87,7 @@ switch($_SERVER["REQUEST_METHOD"]) {
         ]);
         return;
     }
-    
-    
+
     case "POST": {
         
     }
