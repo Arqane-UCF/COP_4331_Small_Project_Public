@@ -390,14 +390,14 @@ paths:
       - Tags
       summary: Get contact tags
       operationId: getContactTags
-      description: Retrieves all tags associated with a specific contact
+      description: Retrieves all tags associated with a specific contact. Not providing contact_id will return all the tags, uniquely, that are used by the user.
       produces:
       - application/json
       parameters:
       - name: contact_id
         in: query
         description: The ID of the contact to retrieve tags for
-        required: true
+        required: false
         type: integer
         format: int32
       responses:
