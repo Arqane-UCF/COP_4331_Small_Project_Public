@@ -2,7 +2,7 @@
 require_once "../DBManager.php";
 session_start();
 
-$userid = $_SESSION["user_id"];
+$userid = $_SESSION["user_id"] ?? null;
 if (!isset($userid)) {
     ?>
     {"success": false, "error": "User not logged in"}
