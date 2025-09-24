@@ -1,34 +1,51 @@
 <?php
 require_once "../DBManager.php";
 session_start();
+header('Content-Type: application/json; charset=utf-8');
 
 if (isset($_SESSION["user_id"])) {
-    ?>
-    {"success": false, "error": "User already logged in"}
-    <?php
-    return;
+    echo json_encode(["success" => true, "redirect" => "/views/dashboard.php"]);
+    exit;
 }
 
-if (!isset($_POST["username"]) || !isset($_POST["password"])) {
+if (
+    !isset($_POST["username"]) ||
+    !isset($_POST["password"]) ||
+    !isset($_POST["confirm"])
+) {
     http_response_code(400);
-    ?>
-    { "success": false, "error": "Missing Fields" }
-    <?php
-    return;
+    echo json_encode(["success" => false, "error" => "Missing fields"]);
+    exit;
 }
 
-$username = $_POST["username"];
-$password = $_POST["password"];
-$registration = User::register($username,$password);
+$username = trim((string)$_POST["username"]);
+$password = (string)$_POST["password"];
+$confirm  = (string)$_POST["confirm"];
 
-if (!isset($registration)) {
-    http_response_code(403);
-    ?>
-    {"success": false, "error": "Registration failed, perhaps duplicate username?"}
-    <?php
-    return;
+if ($username === "" || $password === "") {
+    http_response_code(400);
+    echo json_encode(["success" => false, "error" => "Username and password are required"]);
+    exit;
+}
+
+if ($password !== $confirm) {
+    http_response_code(400);
+    echo json_encode(["success" => false, "error" => "Passwords do not match"]);
+    exit;
+}
+
+$registration = User::register($username, $password);
+
+if (!$registration) {
+    http_response_code(409);
+    echo json_encode(["success" => false, "error" => "Username already exists or registration failed"]);
+    exit;
 }
 
 $_SESSION["user_id"] = $registration->id;
-?>
-{ "success": true, "message": "Registration successful" }
+echo json_encode([
+    "success"  => true,
+    "message"  => "Registration successful",
+    "redirect" => "/views/dashboard.php"
+]);
+exit;
