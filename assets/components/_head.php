@@ -13,8 +13,10 @@
   <?php if ($page === 'dashboard'): ?>
     <link rel="stylesheet" href="/assets/css/components/tag.css">
     <link rel="stylesheet" href="/assets/css/components/buttonDS.css">
+    <link rel="stylesheet" href="/assets/css/components/contactCard.css?v=<?= time() ?>">
     <link rel="stylesheet" href="/assets/css/components/modal.css?v=<?= time() ?>">
   <?php endif; ?>
+
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Kurale&family=Raleway:wght@400;600;700&display=swap" rel="stylesheet">

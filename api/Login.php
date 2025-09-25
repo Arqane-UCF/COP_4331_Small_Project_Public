@@ -25,7 +25,9 @@ if (!$login) {
     exit;
 }
 
-$_SESSION["user_id"] = $login->id;
+$_SESSION["user_id"]  = $login->id;
+$_SESSION["username"] = $login->username; 
+
 echo json_encode([
     "success"  => true,
     "message"  => "Login successful",

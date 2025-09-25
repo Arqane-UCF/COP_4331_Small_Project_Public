@@ -64,4 +64,3 @@
   .cc-icon:hover svg{ transform: translateY(-1px); }
   .cc-icon svg{ transition: transform .15s ease; }
   .cc-delete:hover svg path{ stroke-width:1.6; }
-  

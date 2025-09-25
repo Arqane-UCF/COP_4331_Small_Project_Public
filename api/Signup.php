@@ -42,7 +42,9 @@ if (!$registration) {
     exit;
 }
 
-$_SESSION["user_id"] = $registration->id;
+$_SESSION["user_id"]  = $registration->id;
+$_SESSION["username"] = $registration->username; 
+
 echo json_encode([
     "success"  => true,
     "message"  => "Registration successful",

@@ -238,7 +238,7 @@ class Contact {
     public function save(): bool {
         logger()->debug("Contact.save: Query for contactID %d", [$this->id]);
         $statement = DBGlobal::getRawDB()->prepare("UPDATE contacts SET firstName=?, lastName=?, email=?, phoneNum=? WHERE id=?");
-        $statement->bind_param("sssd", $this->firstName, $this->lastName, $this->email, $this->phoneNum, $this->id);
+        $statement->bind_param("ssssi", $this->firstName, $this->lastName, $this->email, $this->phoneNum, $this->id);
 
         if(!$statement->execute()) {
             logger()->error("Contact.save: ContactID (%d) caused unhandled sql error: %d", [$this->id, $statement->errno]);

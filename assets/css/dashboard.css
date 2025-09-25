@@ -171,4 +171,13 @@
     padding: 0.25rem 0;       
     color: var(--primary);    
   }
-  
+
+
+  .signout-link {
+    font: 600 14px/1 Raleway, system-ui, sans-serif;
+    color: var(--primary);
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 8px;
+  }
+  .signout-link:hover { text-decoration: underline; }
