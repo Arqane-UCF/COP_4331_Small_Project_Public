@@ -145,7 +145,7 @@ class User {
                 (bool)$row["favorite"]
             );
         }
-        logger()->info("User.searchContactByName: UserID (%d) found with %d records", [$this->id, $result->num_rows]);
+        logger()->info("User.searchContactByName: UserID (%d) found with %d records", [$this->id, $res->num_rows]);
         return $out;
     }
 
