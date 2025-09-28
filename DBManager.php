@@ -127,8 +127,8 @@ class User {
             return null;
         }
 
-        logger()->info(sprintf("User.searchContactByName: UserID (%d) found with %d records", $this->id, $statement->num_rows));
         $result = $statement->get_result();
+        logger()->info(sprintf("User.searchContactByName: UserID (%d) found with %d records", $this->id, $result->num_rows));
         $contactLists = array();
         while($contact = $result->fetch_assoc())
             $contactLists[] = new Contact($contact["id"], $contact["firstName"], $contact["lastName"], $contact["email"], $contact["phoneNum"],(bool)$contact["favorite"]);
