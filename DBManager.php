@@ -147,11 +147,11 @@ class User {
 
         $result = $statement->get_result()->fetch_assoc();
         if(!$result) {
-            logger()->warn("User.getContactByID: ContactID (%d) not found", $id);
+            logger()->warn("User.getContactByID: ContactID (%d) not found", [$id]);
             return null;
         }
 
-        logger()->info("User.getContactByID: Successfully pulled ContactID (%d)", $id);
+        logger()->info("User.getContactByID: Successfully pulled ContactID (%d)", [$id]);
         $tags = array();
 
         return new Contact($result["id"], $result["firstName"], $result["lastName"], $result["email"], $result["phoneNum"], (bool)$result["favorite"]);
@@ -161,7 +161,7 @@ class User {
 class Contact {
     private int $id;
     private string $firstName;
-    private string $lastName;
+    private ?string $lastName;
     private string $email;
     private string $phoneNum;
     private bool $isFavorite;
@@ -176,7 +176,7 @@ class Contact {
         $this->phoneNum = $phoneNum;
         $this->isFavorite = $isFavorite;
     }
-    public static function create(int $user_id, string $firstName, string $lastName, string $email, string $phoneNum, ?bool $isFavorite = false): ?Contact {
+    public static function create(int $user_id, string $firstName, string $email, string $phoneNum, ?string $lastName = null, ?bool $isFavorite = false): ?Contact {
         logger()->debug("Contact.create: Query for contact %d", [$user_id]);
         $statement = DBGlobal::getRawDB()->prepare("INSERT INTO contacts (ownerid, firstName, lastName, email, phoneNum, favorite) VALUES (?, ?, ?, ?, ?, ?)");
         $favInt = (bool)$isFavorite;
@@ -238,7 +238,8 @@ class Contact {
     public function save(): bool {
         logger()->debug("Contact.save: Query for contactID %d", [$this->id]);
         $statement = DBGlobal::getRawDB()->prepare("UPDATE contacts SET firstName=?, lastName=?, email=?, phoneNum=?, favorite=? WHERE id=?");
-        $statement->bind_param("ssssii", $this->firstName, $this->lastName, $this->email, $this->phoneNum, (int)$this->isFavorite, $this->id);
+        $favInt = (int)$this->isFavorite;
+        $statement->bind_param("ssssii", $this->firstName, $this->lastName, $this->email, $this->phoneNum, $favInt, $this->id);
 
         if(!$statement->execute()) {
             logger()->error("Contact.save: ContactID (%d) caused unhandled sql error: %d", [$this->id, $statement->errno]);

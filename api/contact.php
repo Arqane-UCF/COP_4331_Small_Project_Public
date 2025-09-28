@@ -89,18 +89,18 @@ switch($_SERVER["REQUEST_METHOD"]) {
     }
 
     case "POST": {
-        if(empty($_POST["firstName"]) || empty($_POST["lastName"]) || empty($_POST["email"]) || empty($_POST["phone"])) {
+        if(empty($_POST["firstName"]) || empty($_POST["email"]) || empty($_POST["phone"])) {
             http_response_code(400);
-            echo json_encode(["success" => false, "error" => "All fields (firstName, lastName, email, phone) are required"]);
+            echo json_encode(["success" => false, "error" => "All fields (firstName, email, phone) are required"]);
             return;
         }
 
         $firstName = trim($_POST["firstName"]);
-        $lastName = trim($_POST["lastName"]);
+        $lastName = $_POST["lastName"] ? trim($_POST["lastName"]) : null;
         $email = trim($_POST["email"]);
         $phone = trim($_POST["phone"]);
 
-        $newContact = Contact::create($user->id, $firstName, $lastName, $email, $phone, false);
+        $newContact = Contact::create($user->id, $firstName, $email, $phone, $lastName, false);
         
         if(!$newContact) {
             http_response_code(500);
