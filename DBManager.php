@@ -246,7 +246,7 @@ class Contact {
             return false;
         }
 
-        if($statement->affected_rows === 0) {
+        if($statement->get_result()->affected_rows === 0) {
             logger()->error("Contact.save: ContactID (%d) potentially not found??", [$this->id]);
             return false;
         }
