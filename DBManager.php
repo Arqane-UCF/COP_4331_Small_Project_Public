@@ -126,11 +126,10 @@ class User {
             logger()->error(sprintf("User.searchContactByName: Prepare failed for userid %d: %s", $this->id, $db->error));
             return null;
         }
-
+      
         $stmt->bind_param($types, ...$vals);
-
         if (!$stmt->execute()) {
-            logger()->error(sprintf("User.searchContactByName: Execute failed for userid %d: %d", $this->id, $stmt->errno));
+            logger()->error("User.searchContactByName: Execute failed for userid %d: %d", [$this->id, $stmt->errno]);
             return null;
         }
 
@@ -146,7 +145,7 @@ class User {
                 (bool)$row["favorite"]
             );
         }
-        logger()->info(sprintf("User.searchContactByName: UserID (%d) found %d records", $this->id, $res->num_rows));
+        logger()->info("User.searchContactByName: UserID (%d) found with %d records", [$this->id, $result->num_rows]);
         return $out;
     }
 
@@ -162,11 +161,11 @@ class User {
 
         $result = $statement->get_result()->fetch_assoc();
         if(!$result) {
-            logger()->warn("User.getContactByID: ContactID (%d) not found", $id);
+            logger()->warn("User.getContactByID: ContactID (%d) not found", [$id]);
             return null;
         }
 
-        logger()->info("User.getContactByID: Successfully pulled ContactID (%d)", $id);
+        logger()->info("User.getContactByID: Successfully pulled ContactID (%d)", [$id]);
         $tags = array();
 
         return new Contact($result["id"], $result["firstName"], $result["lastName"], $result["email"], $result["phoneNum"], (bool)$result["favorite"]);
@@ -176,7 +175,7 @@ class User {
 class Contact {
     private int $id;
     private string $firstName;
-    private string $lastName;
+    private ?string $lastName;
     private string $email;
     private string $phoneNum;
     private bool $isFavorite;
@@ -186,7 +185,7 @@ class Contact {
     {
         $this->id = $id;
         $this->firstName = $firstName;
-        $this->lastName = $lastName ?? '';
+        $this->lastName = $lastName;
         $this->email = $email;
         $this->phoneNum = $phoneNum;
         $this->isFavorite = $isFavorite;
@@ -253,14 +252,15 @@ class Contact {
     public function save(): bool {
         logger()->debug("Contact.save: Query for contactID %d", [$this->id]);
         $statement = DBGlobal::getRawDB()->prepare("UPDATE contacts SET firstName=?, lastName=?, email=?, phoneNum=?, favorite=? WHERE id=?");
-        $statement->bind_param("ssssii", $this->firstName, $this->lastName, $this->email, $this->phoneNum, (int)$this->isFavorite, $this->id);
+        $favInt = (int)$this->isFavorite;
+        $statement->bind_param("ssssii", $this->firstName, $this->lastName, $this->email, $this->phoneNum, $favInt, $this->id);
 
         if(!$statement->execute()) {
             logger()->error("Contact.save: ContactID (%d) caused unhandled sql error: %d", [$this->id, $statement->errno]);
             return false;
         }
 
-        if($statement->affected_rows === 0) {
+        if($statement->get_result()->affected_rows === 0) {
             logger()->error("Contact.save: ContactID (%d) potentially not found??", [$this->id]);
             return false;
         }
