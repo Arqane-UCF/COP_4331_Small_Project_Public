@@ -1,4 +1,5 @@
 <?php
 require_once "./loader.php";
-require __DIR__ . '/views/auth.php';
-\Sentry\logger()->flush();
+
+header("Location: https://poosd.zhiyan114.com/views/auth.php");
+return;
