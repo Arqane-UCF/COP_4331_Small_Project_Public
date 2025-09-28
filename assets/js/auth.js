@@ -1,4 +1,12 @@
+const SwalWithDefaults = Swal.mixin({
+  heightAuto: false
+});
+window.Swal = SwalWithDefaults;
+
+console.log("auth.js loaded");
+
 document.addEventListener('DOMContentLoaded', () => {
+  console.log("auth.js init");
   const wrapper = document.querySelector('.auth-views');
   const titleEl = document.querySelector('.js-title');
   const subEl   = document.querySelector('.js-subtitle');
@@ -45,16 +53,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const startH = wrapper.offsetHeight;
     wrapper.style.height = startH + 'px';
-    void wrapper.offsetHeight; 
+    void wrapper.offsetHeight;
 
     nextEl.classList.add('is-active');
     nextEl.hidden = false;
 
     curEl.classList.add('is-leaving');
-
     wrapper.style.height = endH + 'px';
 
-    const EXIT_MS = 220; 
+    const EXIT_MS = 220;
     setTimeout(() => {
       curEl.classList.remove('is-leaving');
       curEl.classList.remove('is-active');
@@ -99,47 +106,48 @@ document.addEventListener('DOMContentLoaded', () => {
     const v = (ev.state && ev.state.view) || (location.hash ? location.hash.replace('#','') : 'login');
     if (v === 'login' || v === 'signup') setView(v, false);
   });
-});
 
-// TEMP: demo route to dashboard until backend is ready
-[['view-login', "/api/Login.php"],['view-signup', "/api/Signup.php"]].forEach(([id, endpoint]) => {
-  const form = document.querySelector(`#${id} form`);
-  if (form) {
+  async function submitTo(endpoint, form) {
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: new Headers({
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json'
+      }),
+      body: new URLSearchParams([...new FormData(form).entries()]).toString(),
+      credentials: 'same-origin'
+    });
+
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); } catch { data = null; }
+
+    if (res.ok && data && data.success) {
+      window.location.href = data.redirect || '/views/dashboard.php';
+      return;
+    }
+
+    const msg = (data && data.error) ||
+                (text && text.trim()) ||
+                `Request failed (${res.status})`;
+    Swal.fire({ title: "Error", text: msg, icon: "error" });
+  }
+
+  [['view-login','/api/Login.php'], ['view-signup','/api/Signup.php']].forEach(([id, endpoint]) => {
+    const form = document.querySelector(`#${id} form`);
+    if (!form) return;
+
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      //window.location.href = 'dashboard.php';
-
-      const formData = new FormData(form);
-      if(id === "view-signup" && formData.get("password") !== formData.get("confirm"))
-          return Swal.fire({
-              title: "Password Mismatch",
-              text: "Password mismatched, please type the password again!",
-              icon: "error"
-          });
-
-      fetch(endpoint, {
-          method: 'POST',
-          headers: new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' }), // PHP compatibility purpose
-          body: new URLSearchParams(formData).toString()
-      }).then((res)=>{
-          res.json().then(data => {
-              if(!data.success)
-                  return Swal.fire({
-                      title: "Booo",
-                      text: `Uhh: ${data.error}`,
-                      icon: "error",
-                  })
-              return Swal.fire({
-                  title: "YUS",
-                  text: data.message,
-                  icon: "success"
-              })
-          });
-      }).catch(err=>{
-          if(window.Sentry)
-              Sentry.captureException(err);
-      })
-
+      const fd = new FormData(form);
+      if (id === 'view-signup' && fd.get('password') !== fd.get('confirm')) {
+        return Swal.fire({ title: "Password mismatch", text: "Please retype your password.", icon: "error" });
+      }
+      submitTo(endpoint, form).catch(err => {
+        console.error(err);
+        if (window.Sentry) Sentry.captureException(err);
+        Swal.fire({ title: "Network error", text: "Please try again.", icon: "error" });
+      });
     });
-  }
+  });
 });

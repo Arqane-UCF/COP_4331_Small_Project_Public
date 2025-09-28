@@ -1,0 +1,56 @@
+
+   .ds-btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    height: var(--control-h, 56px);
+    padding: 0 16px;
+    border-radius: 50px;
+    border: none;
+    font: 400 24px/1 Kurale, serif;
+    cursor: pointer;
+    user-select: none; white-space: nowrap;
+    transition: background-color .16s ease, color .16s ease;
+  }
+  .ds-btn__label{ display:inline-block; }
+  
+  /* Variants */
+  .ds-btn--primary{
+    background: var(--primary);
+    color: var(--bg);
+  }
+  .ds-btn--outline{
+    background: var(--bg);
+    color: var(--primary);
+    outline: 2px solid var(--primary);
+    outline-offset: -2px;
+  }
+  
+  /* Hover → action/bg (both variants) */
+  .ds-btn:not(.is-disabled):not(:disabled):hover{
+    background: var(--action);
+    color: var(--primary);
+  }
+  
+  /* Pressed → same as active (override hover) */
+  .ds-btn--primary:not(.is-disabled):not(:disabled):active{
+    background: var(--primary);
+    color: var(--bg);
+  }
+  .ds-btn--outline:not(.is-disabled):not(:disabled):active{
+    background: var(--bg);
+    color: var(--primary);
+  }
+  
+  /* Focus ring */
+  .ds-btn:focus-visible{
+    outline: 3px solid var(--ring);
+    outline-offset: 2px;
+  }
+  
+  /* Disabled: no hover/press/click */
+  .ds-btn.is-disabled,
+  .ds-btn:disabled{
+    opacity: .55;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  
