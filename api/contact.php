@@ -96,7 +96,7 @@ switch($_SERVER["REQUEST_METHOD"]) {
         }
 
         $firstName = trim($_POST["firstName"]);
-        $lastName = trim($_POST["lastName"]);
+        $lastName = $_POST["lastName"] ? trim($_POST["lastName"]) : null;
         $email = trim($_POST["email"]);
         $phone = trim($_POST["phone"]);
 
