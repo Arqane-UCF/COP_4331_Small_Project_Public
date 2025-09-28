@@ -61,6 +61,11 @@ paths:
         description: The new user's password
         required: true
         type: string
+      - name: confirm
+        in: formData
+        description: User's password confirmation
+        required: true
+        type: string
       responses:
         "200":
           description: OK
@@ -172,7 +177,7 @@ paths:
       - name: lastName
         in: formData
         description: Contact's last name
-        required: true
+        required: false
         type: string
       - name: email
         in: formData
