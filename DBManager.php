@@ -97,44 +97,58 @@ class User {
 
     /** Partial match either firstName or lastName or both. If none is supplied, we assume return entire record */
     public function searchContactByName(?string $firstName = null, ?string $lastName = null): ?array {
-        $statement = null;
-        $fixedQuery = "SELECT * FROM contacts WHERE ownerid=? %s";
-        if($firstName === null && $lastName === null) {
-            logger()->debug(sprintf("User.searchContactByName: Query without name for userid %s", $this->id));
-            $statement = DBGlobal::getRawDB()->prepare(sprintf($fixedQuery, ""));
-            $statement->bind_param("i", $this->id);
-        }
-        if($firstName !== null && $lastName === null) {
-            logger()->debug(sprintf("User.searchContactByName: Query with only first name for userid %s", $this->id));
-            $statement = DBGlobal::getRawDB()->prepare(sprintf($fixedQuery, "AND firstName LIKE '?%'"));
-            $statement->bind_param("is", $this->id, $firstName);
-        }
-        if($firstName !== null && $lastName === null) {
-            logger()->debug(sprintf("User.searchContactByName: Query with only last name for userid %s", $this->id));
-            $statement = DBGlobal::getRawDB()->prepare(sprintf($fixedQuery, "AND lastName LIKE '?%'"));
-            $statement->bind_param("is", $this->id, $lastName);
-        }
-        if($firstName !== null && $lastName !== null) {
-            logger()->debug(sprintf("User.searchContactByName: Query with both first and last name for userid %s", $this->id));
-            $statement = DBGlobal::getRawDB()->prepare(sprintf($fixedQuery, "AND firstName LIKE '?%' AND lastName LIKE '?%'"));
-            $statement->bind_param("iss", $this->id, $firstName, $lastName);
-        }
-        if($statement === null)
-            return null; // This shouldn't happen at all lmfao
+        $db    = DBGlobal::getRawDB();
+        $sql   = "SELECT * FROM contacts WHERE ownerid = ?";
+        $types = "i";
+        $vals  = [$this->id];
 
-        if (!$statement->execute()) {
-            logger()->error(sprintf("User.searchContactByName: UserID (%d) cause SQL Error: %d", $this->id, $statement->errno));
+        if ($firstName !== null && $lastName === null) {
+            // first-name only (prefix, case-sensitive)
+            $sql   .= " AND firstName LIKE BINARY CONCAT(?, '%')";
+            $types .= "s";
+            $vals[] = $firstName;
+        } elseif ($firstName === null && $lastName !== null) {
+            // last-name only (prefix, case-sensitive)
+            $sql   .= " AND lastName LIKE BINARY CONCAT(?, '%')";
+            $types .= "s";
+            $vals[] = $lastName;
+        } elseif ($firstName !== null && $lastName !== null) {
+            // both provided (prefix, case-sensitive)
+            $sql   .= " AND firstName LIKE BINARY CONCAT(?, '%') AND lastName LIKE BINARY CONCAT(?, '%')";
+            $types .= "ss";
+            $vals[] = $firstName;
+            $vals[] = $lastName;
+        }
+        // else: both null -> return all owner contacts
+
+        $stmt = $db->prepare($sql);
+        if (!$stmt) {
+            logger()->error(sprintf("User.searchContactByName: Prepare failed for userid %d: %s", $this->id, $db->error));
+            return null;
+        }
+      
+        $stmt->bind_param($types, ...$vals);
+        if (!$stmt->execute()) {
+            logger()->error("User.searchContactByName: Execute failed for userid %d: %d", [$this->id, $stmt->errno]);
             return null;
         }
 
-        $result = $statement->get_result();
-        logger()->info(sprintf("User.searchContactByName: UserID (%d) found with %d records", $this->id, $result->num_rows));
-        $contactLists = array();
-        while($contact = $result->fetch_assoc())
-            $contactLists[] = new Contact($contact["id"], $contact["firstName"], $contact["lastName"], $contact["email"], $contact["phoneNum"],(bool)$contact["favorite"]);
-
-        return $contactLists;
+        $res = $stmt->get_result();
+        $out = [];
+        while ($row = $res->fetch_assoc()) {
+            $out[] = new Contact(
+                (int)$row["id"],
+                (string)$row["firstName"],
+                (string)$row["lastName"],
+                (string)$row["email"],
+                (string)$row["phoneNum"],
+                (bool)$row["favorite"]
+            );
+        }
+        logger()->info("User.searchContactByName: UserID (%d) found with %d records", [$this->id, $result->num_rows]);
+        return $out;
     }
+
     public function getContactByID(int $id): ?Contact {
         logger()->debug("User.getContactByID: UserID (%d) query contactID: %d", array($this->id, $id));
         $statement = DBGlobal::getRawDB()->prepare("SELECT * FROM contacts WHERE id=?");

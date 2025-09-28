@@ -177,7 +177,7 @@ paths:
       - name: lastName
         in: formData
         description: Contact's last name
-        required: true
+        required: false
         type: string
       - name: email
         in: formData
