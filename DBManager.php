@@ -176,7 +176,7 @@ class Contact {
         $this->phoneNum = $phoneNum;
         $this->isFavorite = $isFavorite;
     }
-    public static function create(int $user_id, string $firstName, string $lastName, string $email, string $phoneNum, ?bool $isFavorite = false): ?Contact {
+    public static function create(int $user_id, string $firstName, string $email, string $phoneNum, ?string $lastName = null, ?bool $isFavorite = false): ?Contact {
         logger()->debug("Contact.create: Query for contact %d", [$user_id]);
         $statement = DBGlobal::getRawDB()->prepare("INSERT INTO contacts (ownerid, firstName, lastName, email, phoneNum, favorite) VALUES (?, ?, ?, ?, ?, ?)");
         $favInt = (bool)$isFavorite;
