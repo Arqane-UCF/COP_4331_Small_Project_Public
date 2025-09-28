@@ -31,12 +31,12 @@ class User {
             logger()->error(sprintf("User.getByID: Query for userid %d failed with status: %d", $id, $statement->errno));
             return null;
         }
-        if($statement->num_rows === 0) {
+
+        $result = $statement->get_result()->fetch_assoc();
+        if(!$result) {
             logger()->warn(sprintf("User.getByID: Userid %d not found", $id));
             return null;
         }
-
-        $result = $statement->get_result()->fetch_assoc();
         logger()->debug(sprintf("User.getByID: Found Userid %d", $id));
         return new User($result["id"], $result["username"]);
     }
