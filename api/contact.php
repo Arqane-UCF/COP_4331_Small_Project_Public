@@ -13,7 +13,7 @@ if (!isset($userid)) {
 $user = User::getByID($userid);
 if(!$user) {
     ?>
-    {"success": false, "error": "User not found"}
+    {"success": false, "error": "User not found", "DEBUGID": "<?php echo $userid; ?>"}
     <?php
     return;
 }
