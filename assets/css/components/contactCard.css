@@ -75,3 +75,13 @@
   width: min(100%, 350px);
   margin: 0;
 }
+
+/* Put these in contactCard.css or dashboard.css */
+.cards-col .empty {
+  grid-column: 1 / -1;     /* span all grid columns */
+  justify-self: center;     /* center the item itself */
+  text-align: center;       /* center the text within */
+  max-width: 32ch;          /* optional readability */
+  margin: 24px 0;
+}
+

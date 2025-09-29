@@ -78,6 +78,9 @@ function updateEmptyState() {
     const p = document.createElement('p');
     p.className = 'empty';
     p.textContent = 'You have no contacts. Click “+ New Contact” to start keeping track of them.';
+    // Center in grid
+    p.style.gridColumn = '1 / -1';
+    p.style.justifySelf = 'center';
     col.appendChild(p);
   } else if (hasCard && empty) {
     empty.remove();
@@ -727,15 +730,20 @@ function bindEditSave() {
 /* ================================
    SEARCH — toolbar filter
    ================================ */
+// --- replace your existing bindSearch() with this patched version ---
 function bindSearch() {
   const input = document.querySelector('.contacts .toolbar .search input');
   const col   = document.querySelector(MAIN_COL_SEL);
   if (!input || !col) return;
 
+  const EMPTY_HELPER = 'You have no contacts. Click “+ New Contact” to start keeping track of them.';
   const emptySearchP = (() => {
     const p = document.createElement('p');
     p.className = 'empty empty-search';
     p.style.display = 'none';
+    // center it visually in the grid
+    p.style.gridColumn = '1 / -1';
+    p.style.justifySelf = 'center';
     col.appendChild(p);
     return p;
   })();
@@ -754,14 +762,22 @@ function bindSearch() {
     if (!res.ok || !data.success) throw new Error(data.error || 'Search failed');
     return data.contacts || [];
   }
-  
 
   async function apply(q) {
+    const trimmed = (q || '').trim();
+    // If search is cleared, don't touch the DOM; let the server-rendered list/empty-state stand.
+    if (!trimmed) {
+      emptySearchP.style.display = 'none';
+      // Rebuild helper if needed
+      updateEmptyState();
+      return;
+    }
+
     try {
-      const items = await fetchResults(q);
+      const items = await fetchResults(trimmed);
       if (!items.length) {
         col.innerHTML = '';
-        emptySearchP.textContent = q ? 'No matches.' : 'No contacts.';
+        emptySearchP.textContent = 'No matches.';
         emptySearchP.style.display = '';
         return;
       }
@@ -776,8 +792,11 @@ function bindSearch() {
   }
 
   input.addEventListener('input', debounce(() => apply(input.value), 200), { passive: true });
-  apply('');
+
+  // IMPORTANT: remove the initial apply('') call so we do not wipe SSR on load
+  // apply('');
 }
+
 
 /* ================================
    MISC UI — profile menu & toggle
@@ -849,3 +868,4 @@ if (document.readyState === 'loading') {
 } else {
   initDashboard();
 }
+
